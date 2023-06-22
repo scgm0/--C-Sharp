@@ -1,0 +1,401 @@
+[gd_scene load_steps=13 format=3 uid="uid://bp4kxrdwo0t8m"]
+
+[ext_resource type="Script" path="res://scripts/Main.cs" id="1_e2hwx"]
+[ext_resource type="PackedScene" uid="uid://bs6fl1xr7qg8i" path="res://scenes/出生点.tscn" id="2_f5n3k"]
+[ext_resource type="Script" path="res://scripts/境界榜.cs" id="3_rqxc0"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_cemfa"]
+friction = 0.0
+bounce = 1.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_w7y2f"]
+size = Vector2(20, 1080)
+
+[sub_resource type="QuadMesh" id="QuadMesh_4lfpl"]
+size = Vector2(20, 1080)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ixr8f"]
+size = Vector2(20, 1080)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_xrusb"]
+size = Vector2(1920, 20)
+
+[sub_resource type="QuadMesh" id="QuadMesh_vuq1k"]
+size = Vector2(1920, 20)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_kck1e"]
+size = Vector2(1920, 20)
+
+[sub_resource type="QuadMesh" id="QuadMesh_fps1m"]
+size = Vector2(1920, 20)
+
+[sub_resource type="Environment" id="Environment_y65u6"]
+background_mode = 3
+glow_levels/2 = 0.2
+glow_levels/3 = 0.4
+glow_levels/4 = 0.6
+glow_levels/6 = 1.0
+glow_levels/7 = 1.0
+glow_normalized = true
+glow_intensity = 8.0
+glow_strength = 1.75
+glow_blend_mode = 1
+glow_hdr_threshold = 1.1
+glow_hdr_scale = 4.0
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_e2hwx")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+collision_layer = 3
+collision_mask = 3
+physics_material_override = SubResource("PhysicsMaterial_cemfa")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(10, 540)
+shape = SubResource("RectangleShape2D_w7y2f")
+
+[node name="MeshInstance2D" type="MeshInstance2D" parent="StaticBody2D/CollisionShape2D"]
+modulate = Color(0.286275, 0.286275, 0.286275, 1)
+mesh = SubResource("QuadMesh_4lfpl")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(1910, 540)
+shape = SubResource("RectangleShape2D_ixr8f")
+
+[node name="MeshInstance2D" type="MeshInstance2D" parent="StaticBody2D/CollisionShape2D2"]
+modulate = Color(0.286275, 0.286275, 0.286275, 1)
+mesh = SubResource("QuadMesh_4lfpl")
+
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(960, 10)
+shape = SubResource("RectangleShape2D_xrusb")
+
+[node name="MeshInstance2D" type="MeshInstance2D" parent="StaticBody2D/CollisionShape2D3"]
+modulate = Color(0.286275, 0.286275, 0.286275, 1)
+mesh = SubResource("QuadMesh_vuq1k")
+
+[node name="CollisionShape2D4" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(960, 1070)
+shape = SubResource("RectangleShape2D_kck1e")
+
+[node name="MeshInstance2D" type="MeshInstance2D" parent="StaticBody2D/CollisionShape2D4"]
+modulate = Color(0.286275, 0.286275, 0.286275, 1)
+mesh = SubResource("QuadMesh_fps1m")
+
+[node name="CollisionShape2D5" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(430, 540)
+shape = SubResource("RectangleShape2D_ixr8f")
+
+[node name="MeshInstance2D" type="MeshInstance2D" parent="StaticBody2D/CollisionShape2D5"]
+modulate = Color(0.286275, 0.286275, 0.286275, 1)
+mesh = SubResource("QuadMesh_4lfpl")
+
+[node name="CollisionShape2D6" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(1490, 540)
+shape = SubResource("RectangleShape2D_ixr8f")
+
+[node name="MeshInstance2D" type="MeshInstance2D" parent="StaticBody2D/CollisionShape2D6"]
+modulate = Color(0.286275, 0.286275, 0.286275, 1)
+mesh = SubResource("QuadMesh_4lfpl")
+
+[node name="地图" type="CanvasGroup" parent="StaticBody2D"]
+unique_name_in_owner = true
+
+[node name="红出生点" parent="StaticBody2D/地图" instance=ExtResource("2_f5n3k")]
+unique_name_in_owner = true
+position = Vector2(500, 80)
+linear_velocity = Vector2(100, 0)
+metadata/_edit_group_ = true
+
+[node name="黄出生点" parent="StaticBody2D/地图" instance=ExtResource("2_f5n3k")]
+unique_name_in_owner = true
+position = Vector2(1420, 80)
+metadata/_edit_group_ = true
+
+[node name="蓝出生点" parent="StaticBody2D/地图" instance=ExtResource("2_f5n3k")]
+unique_name_in_owner = true
+position = Vector2(1420, 1000)
+linear_velocity = Vector2(-100, 0)
+metadata/_edit_group_ = true
+
+[node name="绿出生点" parent="StaticBody2D/地图" instance=ExtResource("2_f5n3k")]
+unique_name_in_owner = true
+position = Vector2(500, 1000)
+linear_velocity = Vector2(0, -100)
+metadata/_edit_group_ = true
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = -1
+
+[node name="Label" type="Label" parent="CanvasLayer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.1667
+offset_right = 20.0
+offset_bottom = 11.1667
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.0980392)
+theme_override_font_sizes/font_size = 100
+text = "神麤詭末
+"
+
+[node name="年月" type="Label" parent="CanvasLayer"]
+unique_name_in_owner = true
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -47.5
+offset_top = 40.0
+offset_right = 47.5
+offset_bottom = 85.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 35
+text = "0年1月"
+
+[node name="日志" type="RichTextLabel" parent="CanvasLayer"]
+unique_name_in_owner = true
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -410.0
+offset_top = -530.0
+offset_right = -30.0
+offset_bottom = -30.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/normal_font_size = 18
+bbcode_enabled = true
+scroll_following = true
+shortcut_keys_enabled = false
+threaded = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -410.0
+offset_top = 30.0
+offset_right = -30.0
+offset_bottom = 500.0
+grow_horizontal = 0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="境界榜" type="VBoxContainer" parent="CanvasLayer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("3_rqxc0")
+
+[node name="Label" type="Label" parent="CanvasLayer/HBoxContainer/境界榜"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 35
+text = "修为榜"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label1" type="Label" parent="CanvasLayer/HBoxContainer/境界榜"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 25
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label2" type="Label" parent="CanvasLayer/HBoxContainer/境界榜"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 25
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label3" type="Label" parent="CanvasLayer/HBoxContainer/境界榜"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 25
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label4" type="Label" parent="CanvasLayer/HBoxContainer/境界榜"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 25
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label5" type="Label" parent="CanvasLayer/HBoxContainer/境界榜"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 25
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label6" type="Label" parent="CanvasLayer/HBoxContainer/境界榜"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 25
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label7" type="Label" parent="CanvasLayer/HBoxContainer/境界榜"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 25
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label8" type="Label" parent="CanvasLayer/HBoxContainer/境界榜"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 25
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label9" type="Label" parent="CanvasLayer/HBoxContainer/境界榜"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 25
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label10" type="Label" parent="CanvasLayer/HBoxContainer/境界榜"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 25
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="杀戮榜" type="VBoxContainer" parent="CanvasLayer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="CanvasLayer/HBoxContainer/杀戮榜"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 35
+text = "杀戮榜"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label1" type="Label" parent="CanvasLayer/HBoxContainer/杀戮榜"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 25
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label2" type="Label" parent="CanvasLayer/HBoxContainer/杀戮榜"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 25
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label3" type="Label" parent="CanvasLayer/HBoxContainer/杀戮榜"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 25
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label4" type="Label" parent="CanvasLayer/HBoxContainer/杀戮榜"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 25
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label5" type="Label" parent="CanvasLayer/HBoxContainer/杀戮榜"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 25
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label6" type="Label" parent="CanvasLayer/HBoxContainer/杀戮榜"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 25
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label7" type="Label" parent="CanvasLayer/HBoxContainer/杀戮榜"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 25
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label8" type="Label" parent="CanvasLayer/HBoxContainer/杀戮榜"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 25
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label9" type="Label" parent="CanvasLayer/HBoxContainer/杀戮榜"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 25
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label10" type="Label" parent="CanvasLayer/HBoxContainer/杀戮榜"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 25
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CanvasLayer2" type="CanvasLayer" parent="."]
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer2"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.498039)
+
+[node name="Label" type="Label" parent="CanvasLayer2/ColorRect"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 50
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label" type="Label" parent="CanvasLayer2"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -6.0
+offset_bottom = -6.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_outline_color = Color(0.580392, 0.580392, 0.580392, 0.580392)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 50
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Timer" type="Timer" parent="."]
+process_callback = 0
+wait_time = 0.1
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_y65u6")
+
+[connection signal="timeout" from="Timer" to="." method="_OnTimerTimeout"]

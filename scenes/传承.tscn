@@ -1,0 +1,37 @@
+[gd_scene load_steps=6 format=3 uid="uid://dw4v2wkpco5pj"]
+
+[ext_resource type="Shader" path="res://assets/circle.gdshader" id="2_kicxu"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_co8i7"]
+size = Vector2(20, 20)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jox80"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bno7y"]
+resource_local_to_scene = true
+shader = ExtResource("2_kicxu")
+shader_parameter/outer_radius = 0.8
+shader_parameter/inner_radius = 0.92
+shader_parameter/turn = 0.0
+shader_parameter/blur = 0.05
+shader_parameter/fill_ratio = 1.0
+
+[sub_resource type="QuadMesh" id="QuadMesh_21gk8"]
+size = Vector2(40, 40)
+
+[node name="传承" type="Area2D"]
+z_index = -1
+position = Vector2(316, 197)
+collision_layer = 15
+collision_mask = 15
+metadata/_edit_group_ = true
+
+[node name="MeshInstance2D" type="MeshInstance2D" parent="."]
+mesh = SubResource("QuadMesh_co8i7")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_jox80")
+
+[node name="MeshInstance2D2" type="MeshInstance2D" parent="."]
+material = SubResource("ShaderMaterial_bno7y")
+mesh = SubResource("QuadMesh_21gk8")
