@@ -60,6 +60,9 @@ public partial class GlData : Node {
 	[Signal]
 	public delegate void LogEventHandler(string text);
 
+	public PackedScene Ball;
+	public PackedScene Particles;
+
 	public GlData() {
 		Singletons = this;
 	}
@@ -68,6 +71,8 @@ public partial class GlData : Node {
 
 	public override void _Ready() {
 		ProcessMode = ProcessModeEnum.Always;
+		Ball = GD.Load<PackedScene>("res://scenes/ball.tscn");
+		Particles = GD.Load<PackedScene>("res://scenes/particles.tscn");
 	}
 
 	public override void _Input(InputEvent @event) {
@@ -80,12 +85,12 @@ public partial class GlData : Node {
 		Singletons.EmitSignal(SignalName.Log, text);
 	}
 
-	public static string GetGenerateRandomChineseCharacter() {
-		var unicode = (char)GD.RandRange(0x4E00, 0x9FFF + 1);
+	public static StringName GetGenerateRandomChineseCharacter() {
+		var unicode = (char)GD.RandRange(0x4E00, 0x9FA5 + 1);
 		return MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef(in unicode), 1).ToString();
 	}
 
-	public static string GetAgeGroup(double 年龄, double 寿命) {
+	public static StringName GetAgeGroup(double 年龄, double 寿命) {
 		return (年龄 / 寿命) switch {
 			< 0.05 => "幼年",
 			< 0.15 => "少年",
@@ -93,7 +98,8 @@ public partial class GlData : Node {
 			< 0.6 => "中年",
 			< 0.8 => "老年",
 			< 1.0 => "晚年",
-			_ => "幼年"
+			>= 1.0 => "已死",
+			_ => (StringName)"幼年"
 		};
 	}
 }

@@ -4,7 +4,6 @@ namespace 球武道.scripts;
 
 public partial class Main : Node2D {
 	private int _限时 = 100 * 10;
-	private PackedScene _ball;
 
 	public CanvasGroup 地图;
 	public RigidBody2D 红出生点;
@@ -22,8 +21,6 @@ public partial class Main : Node2D {
 
 	public override void _Ready() {
 		GlData.Singletons.Log += OnSingletonsOnLog;
-
-		_ball = GD.Load<PackedScene>("res://scenes/ball.tscn");
 
 		年月 = GetNode<Label>("%年月");
 		日志 = GetNode<RichTextLabel>("%日志");
@@ -79,22 +76,46 @@ public partial class Main : Node2D {
 		年月.Text = $"{年}年{月}月";
 	}
 
-	public Ball 出生(string 身份, Vector2 pos) {
-		var ball = _ball.Instantiate<Ball>();
+	public Ball 出生(StringName 身份, Vector2 pos) {
+		var ball = GlData.Singletons.Ball.Instantiate<Ball>();
 		ball.GlobalPosition = pos;
 		ball.名字 = GlData.GetGenerateRandomChineseCharacter();
 		ball.身份 = 身份;
+		ball.AddToGroup(身份);
 		ball.LinearVelocity = new Vector2((float)GD.RandRange(-10.0, 10.0), (float)GD.RandRange(-10.0, 10.0)).Normalized() * 25;
 		ball.AddToGroup("武者");
 		ball.Ready += () => {
 			ball.境界 = 设定.境界.武徒;
 			ball.年龄 = 0;
+			GlData.MainLog(
+				$"[color={
+					ball.Body.Modulate.ToHtml()
+				}][font_size=21]{
+					ball.名字
+				}（{
+					ball.境界
+				}）[/font_size][/color] 出生了：境界【{
+					ball.境界
+				}】 寿命【{
+					ball.寿命
+				}】 生命【{
+					ball.生命
+				}/{
+					ball.生命上限
+				}】 修为【{
+					ball.修为
+				}/{
+					ball.修为上限
+				}】 资质【{
+					ball.资质
+				}】");
 		};
 		return ball;
 	}
 
 	private void OnSingletonsOnLog(string text) {
 		日志.AppendText(text);
+		// 日志.AppendText("\n");
 		日志.AppendText("[font_size=6]\n\n[/font_size]");
 	}
 }

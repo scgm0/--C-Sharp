@@ -48,7 +48,7 @@ public partial class 境界榜 : VBoxContainer {
 			return;
 		}
 
-		var balls = new Array<Node>(arr.OrderBy(a => a, _customComparer).ToArray());
+		var balls = new Array<Node>(arr.OrderBy(a => a, _customComparer));
 		balls.Resize(10);
 		for (var i = 0; i < 10; i++) {
 			var label = _labels[i];

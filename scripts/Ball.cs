@@ -5,6 +5,10 @@ using Godot;
 namespace 球武道.scripts;
 
 public partial class Ball : RigidBody2D {
+
+	[Signal]
+	public delegate void 死亡EventHandler(string 死因);
+
 	private 设定.境界 _境界;
 	private int _年龄;
 	private int _生命 = 100;
@@ -13,12 +17,12 @@ public partial class Ball : RigidBody2D {
 	private double _修为;
 	private int _tipIndex0;
 	private int _tipIndex1;
-	public int 累计修为;
 
-	public string 名字;
-	public string 身份;
+	public int 累计修为;
+	public StringName 名字;
+	public StringName 身份;
 	public int 修为上限 = 120;
-	public bool 已死 = false;
+	public bool 已死;
 	public double 资质 = 0.2;
 	public MeshInstance2D Body;
 
@@ -54,6 +58,9 @@ public partial class Ball : RigidBody2D {
 		set {
 			_寿命 = value;
 			GetNode<Label>("%年龄").Text = GlData.GetAgeGroup(年龄, 寿命);
+			if (年龄 > 寿命) {
+				死($"寿尽而亡，享年{年龄 - 1}岁");
+			}
 		}
 		get => _寿命;
 	}
@@ -62,6 +69,9 @@ public partial class Ball : RigidBody2D {
 		set {
 			_年龄 = value;
 			GetNode<Label>("%年龄").Text = GlData.GetAgeGroup(年龄, 寿命);
+			if (年龄 > 寿命) {
+				死($"寿尽而亡：享年{年龄 - 1}岁");
+			}
 		}
 		get => _年龄;
 	}
@@ -86,24 +96,47 @@ public partial class Ball : RigidBody2D {
 		Body = GetNode<MeshInstance2D>("Body");
 		Body.Modulate = 设定.阵营[身份];
 		GetNode<Label>("%名字").Text = 名字;
+		死亡 += 死因 => {
+			var par = GlData.Singletons.Particles.Instantiate<GpuParticles2D>();
+			par.Emitting = true;
+			par.Modulate = Body.Modulate;
+			par.GlobalPosition = GlobalPosition;
+			AddSibling(par);
+			GlData.MainLog($"[color={Body.Modulate.ToHtml()}][font_size=21]{名字}（{境界}）[/font_size][/color]{死因}");
+		};
 	}
 
 	public void 过月() {
 		修为 += 资质;
 	}
 
-	public void 突破() {
-		if (!已死) {
-			var self = this;
-			累计修为 += 修为上限;
-			修为 -= 修为上限;
-			境界 += 1;
-			var 属性 = 设定.属性[境界];
-			self *= 属性;
-		}
+	public void 过年() {
+		年龄 += 1;
 	}
 
-	public static Ball operator +(Ball a, 属性值 b) {
+	public async void 死(string 死因) {
+		已死 = true;
+		RemoveFromGroup("武者");
+		RemoveFromGroup(身份);
+		Body.Visible = false;
+		EmitSignal(SignalName.死亡, 死因);
+		SetDeferred("sleeping", true);
+		SetDeferred("freeze", true);
+		GetNode("CollisionShape2D").SetDeferred("disabled", true);
+		await ToSignal(GetTree().CreateTimer(2), Timer.SignalName.Timeout);
+		QueueFree();
+	}
+
+	public void 突破() {
+		if (已死) return;
+		累计修为 += 修为上限;
+		修为 -= 修为上限;
+		境界 += 1;
+		var 属性 = 设定.属性[境界];
+		Mul(this, 属性);
+	}
+
+	public static void Add(Ball a, 属性值 b) {
 		a.寿命 += Mathf.CeilToInt(b.寿命 ?? 0.0);
 		a.年龄 += Mathf.CeilToInt(b.年龄 ?? 0.0);
 		a.生命上限 += Mathf.CeilToInt(b.生命上限 ?? 0.0);
@@ -111,10 +144,9 @@ public partial class Ball : RigidBody2D {
 		a.修为上限 += Mathf.CeilToInt(b.修为上限 ?? 0);
 		a.修为 += b.修为 ?? 0;
 		a.资质 += b.资质 ?? 0;
-		return a;
 	}
 
-	public static Ball operator *(Ball a, 属性值 b) {
+	public static void Mul(Ball a, 属性值 b) {
 		a.寿命 = (int)(a.寿命 * b.寿命 ?? 1);
 		a.年龄 = (int)(a.年龄 * b.年龄 ?? 1);
 		a.生命上限 = (int)(a.生命上限 * b.生命上限 ?? 1);
@@ -122,6 +154,5 @@ public partial class Ball : RigidBody2D {
 		a.修为上限 = (int)(a.修为上限 * b.修为上限 ?? 1);
 		a.修为 *= b.修为 ?? 1;
 		a.资质 *= b.资质 ?? 1;
-		return a;
 	}
 }

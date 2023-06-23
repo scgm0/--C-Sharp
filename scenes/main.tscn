@@ -171,11 +171,10 @@ offset_right = -30.0
 offset_bottom = -30.0
 grow_horizontal = 0
 grow_vertical = 0
-theme_override_font_sizes/normal_font_size = 18
+theme_override_font_sizes/normal_font_size = 14
 bbcode_enabled = true
+scroll_active = false
 scroll_following = true
-shortcut_keys_enabled = false
-threaded = true
 
 [node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer"]
 anchors_preset = 1
