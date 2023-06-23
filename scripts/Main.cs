@@ -76,8 +76,8 @@ public partial class Main : Node2D {
 		年月.Text = $"{年}年{月}月";
 	}
 
-	public Ball 出生(StringName 身份, Vector2 pos) {
-		var ball = GlData.Singletons.Ball.Instantiate<Ball>();
+	public Ball 出生(StringName 身份, Vector2 pos, Ball ball = null) {
+		ball ??= GlData.Singletons.Ball.Instantiate<Ball>();
 		ball.GlobalPosition = pos;
 		ball.名字 = GlData.GetGenerateRandomChineseCharacter();
 		ball.身份 = 身份;
@@ -115,7 +115,6 @@ public partial class Main : Node2D {
 
 	private void OnSingletonsOnLog(string text) {
 		日志.AppendText(text);
-		// 日志.AppendText("\n");
 		日志.AppendText("[font_size=6]\n\n[/font_size]");
 	}
 }

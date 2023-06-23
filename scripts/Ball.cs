@@ -7,7 +7,10 @@ namespace 球武道.scripts;
 public partial class Ball : RigidBody2D {
 
 	[Signal]
-	public delegate void 死亡EventHandler(string 死因);
+	public delegate void 死亡事件EventHandler(string 死因);
+
+	[Signal]
+	public delegate void 属性事件EventHandler(设定.属性名 name, double num);
 
 	private 设定.境界 _境界;
 	private int _年龄;
@@ -19,11 +22,11 @@ public partial class Ball : RigidBody2D {
 	private int _tipIndex1;
 
 	public int 累计修为;
-	public StringName 名字;
-	public StringName 身份;
+	[Export] public StringName 名字;
+	[Export] public StringName 身份;
 	public int 修为上限 = 120;
 	public bool 已死;
-	public double 资质 = 0.2;
+	[Export] public double 资质 = 0.2;
 	public MeshInstance2D Body;
 
 	[Export]
@@ -43,6 +46,7 @@ public partial class Ball : RigidBody2D {
 		get => _境界;
 	}
 
+	[Export]
 	public double 修为 {
 		private set {
 			_修为 = Mathf.Snapped(value, 0.1);
@@ -86,23 +90,43 @@ public partial class Ball : RigidBody2D {
 
 	public int 生命 {
 		set {
-			_生命 = Mathf.Max(value, 生命上限);
+			_生命 = Mathf.Min(value, 生命上限);
 			((ShaderMaterial)GetNode<MeshInstance2D>("%生命").Material).SetShaderParameter("fill_ratio", (double)生命 / 生命上限 * 0.5);
 		}
 		get => _生命;
 	}
 
+
 	public override void _Ready() {
 		Body = GetNode<MeshInstance2D>("Body");
 		Body.Modulate = 设定.阵营[身份];
 		GetNode<Label>("%名字").Text = 名字;
-		死亡 += 死因 => {
+		死亡事件 += 死因 => {
 			var par = GlData.Singletons.Particles.Instantiate<GpuParticles2D>();
 			par.Emitting = true;
 			par.Modulate = Body.Modulate;
 			par.GlobalPosition = GlobalPosition;
 			AddSibling(par);
 			GlData.MainLog($"[color={Body.Modulate.ToHtml()}][font_size=21]{名字}（{境界}）[/font_size][/color]{死因}");
+		};
+
+		属性事件 += (name, num) => {
+			if (num == 0) return;
+			AddTip($"{name}{(num > 0 ? "+" + num : num)}", num);
+			switch (name) {
+				case 设定.属性名.寿命: break;
+				case 设定.属性名.年龄: break;
+				case 设定.属性名.生命上限:
+					生命上限 += (int)num;
+					break;
+				case 设定.属性名.生命:
+					生命 += (int)num;
+					break;
+				case 设定.属性名.修为上限: break;
+				case 设定.属性名.修为: break;
+				case 设定.属性名.资质: break;
+				default: throw new ArgumentOutOfRangeException(nameof(name), name, null);
+			}
 		};
 	}
 
@@ -119,7 +143,7 @@ public partial class Ball : RigidBody2D {
 		RemoveFromGroup("武者");
 		RemoveFromGroup(身份);
 		Body.Visible = false;
-		EmitSignal(SignalName.死亡, 死因);
+		EmitSignal(SignalName.死亡事件, 死因);
 		SetDeferred("sleeping", true);
 		SetDeferred("freeze", true);
 		GetNode("CollisionShape2D").SetDeferred("disabled", true);
@@ -134,9 +158,50 @@ public partial class Ball : RigidBody2D {
 		境界 += 1;
 		var 属性 = 设定.属性[境界];
 		Mul(this, 属性);
+		EmitSignal(SignalName.属性事件, (int)设定.属性名.生命, 生命上限 * 0.1);
+		GlData.MainLog(
+			$"[color={
+				Body.Modulate.ToHtml()
+			}][font_size=21]{
+				名字
+			}[/font_size][/color] 突破了【{
+				境界
+			}】： 寿命【{
+				寿命
+			}】 生命【{
+				生命
+			}/{
+				生命上限
+			}】 修为【{
+				修为
+			}/{
+				修为上限
+			}】 资质【{
+				资质
+			}】");
 	}
 
-	public static void Add(Ball a, 属性值 b) {
+	public async void AddTip(string text, double num) {
+		var tip = GlData.Singletons.Tip.Instantiate<Tip>();
+		tip.Text = text;
+		tip.正负 = num < 0;
+		tip.AddThemeColorOverride("font_color", Body.Modulate);
+		if (num > 0) {
+			tip.Position = tip.Position with { Y = -20 };
+			GetTree().CreateTimer(0.4).Timeout += () => _tipIndex0 -= 1;
+			_tipIndex0++;
+			await ToSignal(GetTree().CreateTimer((_tipIndex0 - 1) * 0.4), Timer.SignalName.Timeout);
+		} else {
+			tip.Position = tip.Position with { Y = 30 };
+			GetTree().CreateTimer(0.4).Timeout += () => _tipIndex1 -= 1;
+			_tipIndex1++;
+			await ToSignal(GetTree().CreateTimer((_tipIndex1 - 1) * 0.4), Timer.SignalName.Timeout);
+		}
+
+		AddChild(tip);
+	}
+
+	public static void Add(Ball a, 设定.属性值 b) {
 		a.寿命 += Mathf.CeilToInt(b.寿命 ?? 0.0);
 		a.年龄 += Mathf.CeilToInt(b.年龄 ?? 0.0);
 		a.生命上限 += Mathf.CeilToInt(b.生命上限 ?? 0.0);
@@ -146,12 +211,12 @@ public partial class Ball : RigidBody2D {
 		a.资质 += b.资质 ?? 0;
 	}
 
-	public static void Mul(Ball a, 属性值 b) {
-		a.寿命 = (int)(a.寿命 * b.寿命 ?? 1);
-		a.年龄 = (int)(a.年龄 * b.年龄 ?? 1);
-		a.生命上限 = (int)(a.生命上限 * b.生命上限 ?? 1);
-		a.生命 = (int)(a.生命 * b.生命 ?? 1);
-		a.修为上限 = (int)(a.修为上限 * b.修为上限 ?? 1);
+	public static void Mul(Ball a, 设定.属性值 b) {
+		a.寿命 = (int)(a.寿命 * (b.寿命 ?? 1));
+		a.年龄 = (int)(a.年龄 * (b.年龄 ?? 1));
+		a.生命上限 = (int)(a.生命上限 * (b.生命上限 ?? 1));
+		a.生命 = (int)(a.生命 * (b.生命 ?? 1));
+		a.修为上限 = (int)(a.修为上限 * (b.修为上限 ?? 1));
 		a.修为 *= b.修为 ?? 1;
 		a.资质 *= b.资质 ?? 1;
 	}

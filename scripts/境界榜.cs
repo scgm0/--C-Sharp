@@ -5,24 +5,6 @@ using Godot.Collections;
 
 namespace 球武道.scripts;
 
-class CustomComparer : IComparer<Ball>, IComparer<Node> {
-	public int Compare(Ball a, Ball b) {
-		if ((int)a!.境界 > (int)b!.境界) {
-			return -1;
-		}
-
-		if ((int)a.境界 < (int)b.境界) {
-			return 1;
-		}
-
-		return a.修为.CompareTo(b.修为) * -1;
-	}
-
-	public int Compare(Node x, Node y) {
-		return Compare(x as Ball, y as Ball);
-	}
-}
-
 public partial class 境界榜 : VBoxContainer {
 	private readonly IComparer<Node> _customComparer = new CustomComparer();
 	private Array<Label> _labels;

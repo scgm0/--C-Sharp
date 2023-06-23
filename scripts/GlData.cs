@@ -5,17 +5,28 @@ using Godot;
 
 namespace 球武道.scripts;
 
-public struct 属性值 {
-	public double? 寿命;
-	public double? 年龄;
-	public double? 生命上限;
-	public double? 生命;
-	public double? 修为上限;
-	public double? 修为;
-	public double? 资质;
-}
+
 
 public static class 设定 {
+	public enum 属性名 {
+		寿命,
+		年龄,
+		生命上限,
+		生命,
+		修为上限,
+		修为,
+		资质
+	}
+	public struct 属性值 {
+		public double? 寿命;
+		public double? 年龄;
+		public double? 生命上限;
+		public double? 生命;
+		public double? 修为上限;
+		public double? 修为;
+		public double? 资质;
+	}
+	
 	public enum 境界 {
 		武徒,
 
@@ -43,16 +54,16 @@ public static class 设定 {
 
 	public static readonly Dictionary<境界, 属性值> 属性 = new() {
 		{ 境界.武徒, new 属性值 { 寿命 = 1.0, 生命上限 = 1.0, 修为上限 = 1.0 } },
-		{ 境界.炼精化气, new 属性值 { 寿命 = 1.5, 生命上限 = 1.5, 修为上限 = 2.0 } },
-		{ 境界.炼气化神, new 属性值 { 寿命 = 1.5, 生命上限 = 1.5, 修为上限 = 2.0 } },
-		{ 境界.炼神还虚, new 属性值 { 寿命 = 1.5, 生命上限 = 1.5, 修为上限 = 2.0 } },
-		{ 境界.铜皮铁骨, new 属性值 { 寿命 = 2.0, 生命上限 = 2.0, 修为上限 = 3.0 } },
-		{ 境界.毫发不爽, new 属性值 { 寿命 = 2.0, 生命上限 = 2.0, 修为上限 = 3.0 } },
-		{ 境界.心领神会, new 属性值 { 寿命 = 2.0, 生命上限 = 2.0, 修为上限 = 3.0 } },
-		{ 境界.滴血重生, new 属性值 { 寿命 = 2.5, 生命上限 = 2.5, 修为上限 = 4.0 } },
-		{ 境界.合道同归, new 属性值 { 寿命 = 2.5, 生命上限 = 2.5, 修为上限 = 4.0 } },
-		{ 境界.独步乾坤, new 属性值 { 寿命 = 2.5, 生命上限 = 2.5, 修为上限 = 4.0 } },
-		{ 境界.武神, new 属性值 { 寿命 = 3.0, 生命上限 = 3.0, 修为上限 = 5.0 } }
+		{ 境界.炼精化气, new 属性值 { 寿命 = 1.5, 生命上限 = 1.5, 生命 = 1.5, 修为上限 = 2.0 } },
+		{ 境界.炼气化神, new 属性值 { 寿命 = 1.5, 生命上限 = 1.5, 生命 = 1.5, 修为上限 = 2.0 } },
+		{ 境界.炼神还虚, new 属性值 { 寿命 = 1.5, 生命上限 = 1.5, 生命 = 1.5, 修为上限 = 2.0 } },
+		{ 境界.铜皮铁骨, new 属性值 { 寿命 = 2.0, 生命上限 = 2.0, 生命 = 2.0, 修为上限 = 3.0 } },
+		{ 境界.毫发不爽, new 属性值 { 寿命 = 2.0, 生命上限 = 2.0, 生命 = 2.0, 修为上限 = 3.0 } },
+		{ 境界.心领神会, new 属性值 { 寿命 = 2.0, 生命上限 = 2.0, 生命 = 2.0, 修为上限 = 3.0 } },
+		{ 境界.滴血重生, new 属性值 { 寿命 = 2.5, 生命上限 = 2.5, 生命 = 2.5, 修为上限 = 4.0 } },
+		{ 境界.合道同归, new 属性值 { 寿命 = 2.5, 生命上限 = 2.5, 生命 = 2.5, 修为上限 = 4.0 } },
+		{ 境界.独步乾坤, new 属性值 { 寿命 = 2.5, 生命上限 = 2.5, 生命 = 2.5, 修为上限 = 4.0 } },
+		{ 境界.武神, new 属性值 { 寿命 = 3.0, 生命上限 = 3.0, 生命 = 3.0, 修为上限 = 5.0 } }
 	};
 }
 
@@ -62,6 +73,7 @@ public partial class GlData : Node {
 
 	public PackedScene Ball;
 	public PackedScene Particles;
+	public PackedScene Tip;
 
 	public GlData() {
 		Singletons = this;
@@ -73,6 +85,7 @@ public partial class GlData : Node {
 		ProcessMode = ProcessModeEnum.Always;
 		Ball = GD.Load<PackedScene>("res://scenes/ball.tscn");
 		Particles = GD.Load<PackedScene>("res://scenes/particles.tscn");
+		Tip = GD.Load<PackedScene>("res://scenes/tip.tscn");
 	}
 
 	public override void _Input(InputEvent @event) {
@@ -101,5 +114,23 @@ public partial class GlData : Node {
 			>= 1.0 => "已死",
 			_ => (StringName)"幼年"
 		};
+	}
+}
+
+class CustomComparer : IComparer<Ball>, IComparer<Node> {
+	public int Compare(Ball a, Ball b) {
+		if ((int)a!.境界 > (int)b!.境界) {
+			return -1;
+		}
+
+		if ((int)a.境界 < (int)b.境界) {
+			return 1;
+		}
+
+		return a.修为.CompareTo(b.修为) * -1;
+	}
+
+	public int Compare(Node x, Node y) {
+		return Compare(x as Ball, y as Ball);
 	}
 }
