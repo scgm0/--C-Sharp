@@ -43,7 +43,7 @@ public partial class Ball : RigidBody2D {
 	}
 
 	public MeshInstance2D Body;
-	
+
 
 	[Export]
 	public 设定.境界 境界 {
@@ -73,7 +73,7 @@ public partial class Ball : RigidBody2D {
 		}
 		get => _修为;
 	}
-	
+
 	public double 总修为 {
 		get => 累计修为 + 修为;
 	}
@@ -141,7 +141,7 @@ public partial class Ball : RigidBody2D {
 
 		属性事件 += (name, num) => {
 			if (num == 0) return;
-			AddTip($"{name}{(num > 0 ? $"+{num:F1}": num):F1}", num);
+			AddTip($"{name}{(num > 0 ? $"+{num:F1}" : num):F1}", num);
 			switch (name) {
 				case 设定.属性名.寿命: break;
 				case 设定.属性名.年龄: break;
@@ -162,7 +162,6 @@ public partial class Ball : RigidBody2D {
 					break;
 				default: throw new ArgumentOutOfRangeException(nameof(name), name, null);
 			}
-			
 		};
 	}
 
@@ -191,7 +190,7 @@ public partial class Ball : RigidBody2D {
 		if (已死) return;
 		累计修为 += 修为上限;
 		var old修为上限 = 修为上限;
-		境界 ++;
+		境界++;
 		Mul(this, 设定.属性[境界]);
 		EmitSignal(SignalName.属性事件, (int)设定.属性名.生命, (int)(生命上限 * 0.1));
 		GlData.MainLog(
@@ -212,7 +211,7 @@ public partial class Ball : RigidBody2D {
 			}/{
 				生命上限
 			}】 修为【{
-				修为
+				修为 - old修为上限
 				:F1}/{
 				修为上限
 			}】 资质【{

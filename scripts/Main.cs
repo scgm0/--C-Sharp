@@ -12,7 +12,7 @@ public partial class Main : Node2D {
 	public RigidBody2D 黄出生点;
 	public RigidBody2D 蓝出生点;
 	public RigidBody2D 绿出生点;
-	
+
 
 	public Label 年月;
 	public RichTextLabel 日志;
@@ -94,6 +94,7 @@ public partial class Main : Node2D {
 						ball.Freeze = true;
 					}
 				}
+
 				await ToSignal(GetTree().CreateTimer(1.5), Timer.SignalName.Timeout);
 				结束(one);
 				if (OS.HasFeature("movie")) {
@@ -189,11 +190,14 @@ public partial class Main : Node2D {
 							if (ball.境界 <= 敌人.境界) {
 								x += 敌人.累计修为 * 0.05;
 								x += (1 + (敌人.境界 - ball.境界) * 0.1) * GD.RandRange(敌人.修为 * 0.5, 敌人.修为 * 0.8);
-								ball.EmitSignal(Ball.SignalName.属性事件, (int)设定.属性名.资质, Mathf.Snapped(Mathf.Max(敌人.资质 * 0.25, 0.1), 0.1));
+								ball.EmitSignal(Ball.SignalName.属性事件,
+									(int)设定.属性名.资质,
+									Mathf.Snapped(Mathf.Max(敌人.资质 * 0.25, 0.1), 0.1));
 							} else {
 								x += 敌人.累计修为 * 0.05 * (1 / (double)(ball.境界 - 敌人.境界));
 								x += (1 / (double)(ball.境界 - 敌人.境界)) * GD.RandRange(敌人.修为 * 0.5, 敌人.修为 * 0.8);
-								ball.EmitSignal(Ball.SignalName.属性事件, (int)设定.属性名.资质, 0.1);
+								ball.EmitSignal(Ball.SignalName.属性事件, (int)设定.属性名.资质, (ball.境界 - 敌人.境界) >
+								 2 ? 0 : 1.0);
 							}
 
 							ball.EmitSignal(Ball.SignalName.属性事件, (int)设定.属性名.修为, Mathf.Snapped(x, 0.1));

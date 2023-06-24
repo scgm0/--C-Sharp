@@ -29,7 +29,7 @@ public partial class 传承 : Area2D {
 			if (body is not Ball ball || ball.身份 != 身份) return;
 			ball.EmitSignal(Ball.SignalName.属性事件, (int)设定.属性名.资质, 属性.资质 ?? 0.0);
 			ball.EmitSignal(Ball.SignalName.属性事件, (int)设定.属性名.修为, 属性.修为 ?? 0.0);
-			ball.EmitSignal(Ball.SignalName.属性事件, (int)设定.属性名.生命上限, Mathf.CeilToInt(ball.生命上限 * 0.1));
+			ball.EmitSignal(Ball.SignalName.属性事件, (int)设定.属性名.生命, Mathf.CeilToInt(ball.生命上限 * 0.1));
 			QueueFree();
 			GetNode("CollisionShape2D").SetDeferred("disabled", true);
 		};
