@@ -187,9 +187,8 @@ public partial class Ball : RigidBody2D {
 		if (已死) return;
 		累计修为 += 修为上限;
 		var old修为上限 = 修为上限;
-		境界 += 1;
-		var 属性 = 设定.属性[境界];
-		Mul(this, 属性);
+		境界 ++;
+		Mul(this, 设定.属性[境界]);
 		EmitSignal(SignalName.属性事件, (int)设定.属性名.生命, (int)(生命上限 * 0.1));
 		GlData.MainLog(
 			$"[color={
@@ -239,22 +238,22 @@ public partial class Ball : RigidBody2D {
 	}
 
 	public static void Add(Ball a, 设定.属性值 b) {
-		a.寿命 += Mathf.CeilToInt(b.寿命 ?? 0.0);
-		a.年龄 += Mathf.CeilToInt(b.年龄 ?? 0.0);
-		a.生命上限 += Mathf.CeilToInt(b.生命上限 ?? 0.0);
-		a.生命 += Mathf.CeilToInt(b.生命 ?? 0.0);
-		a.修为上限 += Mathf.CeilToInt(b.修为上限 ?? 0);
-		a.修为 += b.修为 ?? 0;
-		a.资质 += b.资质 ?? 0;
+		if (b.寿命 != null) a.寿命 += Mathf.CeilToInt((double)b.寿命);
+		if (b.年龄 != null) a.年龄 += Mathf.CeilToInt((double)b.年龄);
+		if (b.生命上限 != null) a.生命上限 += Mathf.CeilToInt((double)b.生命上限);
+		if (b.生命 != null) a.生命 += Mathf.CeilToInt((double)b.生命);
+		if (b.修为上限 != null) a.修为上限 += Mathf.CeilToInt((double)b.修为上限);
+		if (b.修为 != null) a.修为 += (double)b.修为;
+		if (b.资质 != null) a.资质 += (double)b.资质;
 	}
 
 	public static void Mul(Ball a, 设定.属性值 b) {
-		a.寿命 = (int)(a.寿命 * (b.寿命 ?? 1));
-		a.年龄 = (int)(a.年龄 * (b.年龄 ?? 1));
-		a.生命上限 = (int)(a.生命上限 * (b.生命上限 ?? 1));
-		a.生命 = (int)(a.生命 * (b.生命 ?? 1));
-		a.修为上限 = (int)(a.修为上限 * (b.修为上限 ?? 1));
-		a.修为 *= b.修为 ?? 1;
-		a.资质 *= b.资质 ?? 1;
+		if (b.寿命 != null) a.寿命 = (int)(a.寿命 * b.寿命);
+		if (b.年龄 != null) a.年龄 = (int)(a.年龄 * b.年龄);
+		if (b.生命上限 != null) a.生命上限 = (int)(a.生命上限 * b.生命上限);
+		if (b.生命 != null) a.生命 = (int)(a.生命 * b.生命);
+		if (b.修为上限 != null) a.修为上限 = (int)(a.修为上限 * b.修为上限);
+		if (b.修为 != null) a.修为 *= (double)b.修为;
+		if (b.资质 != null) a.资质 *= (double)b.资质;
 	}
 }
