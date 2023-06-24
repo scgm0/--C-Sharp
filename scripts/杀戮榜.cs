@@ -28,7 +28,7 @@ public partial class 杀戮榜 : VBoxContainer {
 			return;
 		}
 		
-		var balls = new Array<Node>(arr.OrderByDescending(a => ((Ball)a).击杀数).ThenByDescending(a => ((Ball)a).累计修为 + ((Ball)a).修为));
+		var balls = new Array<Node>(arr.OrderByDescending(a => ((Ball)a).击杀数).ThenByDescending(a => ((Ball)a).总修为));
 		balls.Resize(10);
 		for (var i = 0; i < 10; i++) {
 			var label = _labels[i];

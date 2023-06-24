@@ -73,6 +73,10 @@ public partial class Ball : RigidBody2D {
 		}
 		get => _修为;
 	}
+	
+	public double 总修为 {
+		get => 累计修为 + 修为;
+	}
 
 	public int 寿命 {
 		private set {
@@ -95,7 +99,7 @@ public partial class Ball : RigidBody2D {
 				cc.身份 = 身份;
 				cc.属性 = new 设定.属性值 {
 					资质 = 资质,
-					修为 = (累计修为 + 修为) * 0.25
+					修为 = 总修为 * 0.25
 				};
 				cc.Duration = 寿命 * 1.2 * (1.0 + (int)境界 * 0.5) * 2;
 				cc.GlobalPosition = GlobalPosition;

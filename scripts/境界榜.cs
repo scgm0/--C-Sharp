@@ -29,7 +29,7 @@ public partial class 境界榜 : VBoxContainer {
 		}
 		
 		// var balls = new Array<Node>(arr.OrderByDescending(a => ((Ball)a).境界).ThenByDescending(a => ((Ball)a).修为));
-		var balls = new Array<Node>(arr.OrderByDescending(a => ((Ball)a).累计修为 + ((Ball)a).修为));
+		var balls = new Array<Node>(arr.OrderByDescending(a => ((Ball)a).总修为));
 		balls.Resize(10);
 		for (var i = 0; i < 10; i++) {
 			var label = _labels[i];
