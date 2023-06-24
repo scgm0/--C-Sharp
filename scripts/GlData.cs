@@ -74,6 +74,7 @@ public partial class GlData : Node {
 	public PackedScene Ball;
 	public PackedScene Particles;
 	public PackedScene Tip;
+	public PackedScene Inherited;
 
 	public GlData() {
 		Singletons = this;
@@ -86,6 +87,10 @@ public partial class GlData : Node {
 		Ball = GD.Load<PackedScene>("res://scenes/ball.tscn");
 		Particles = GD.Load<PackedScene>("res://scenes/particles.tscn");
 		Tip = GD.Load<PackedScene>("res://scenes/tip.tscn");
+		Inherited = GD.Load<PackedScene>("res://scenes/传承.tscn");
+		if (OS.HasFeature("movie")) {
+			DisplayServer.WindowSetMode(DisplayServer.WindowMode.Fullscreen);
+		}
 	}
 
 	public override void _Input(InputEvent @event) {
@@ -114,23 +119,5 @@ public partial class GlData : Node {
 			>= 1.0 => "已死",
 			_ => (StringName)"幼年"
 		};
-	}
-}
-
-class CustomComparer : IComparer<Ball>, IComparer<Node> {
-	public int Compare(Ball a, Ball b) {
-		if ((int)a!.境界 > (int)b!.境界) {
-			return -1;
-		}
-
-		if ((int)a.境界 < (int)b.境界) {
-			return 1;
-		}
-
-		return a.修为.CompareTo(b.修为) * -1;
-	}
-
-	public int Compare(Node x, Node y) {
-		return Compare(x as Ball, y as Ball);
 	}
 }

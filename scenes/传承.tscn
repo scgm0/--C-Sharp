@@ -1,5 +1,6 @@
-[gd_scene load_steps=6 format=3 uid="uid://dw4v2wkpco5pj"]
+[gd_scene load_steps=7 format=3 uid="uid://dw4v2wkpco5pj"]
 
+[ext_resource type="Script" path="res://scripts/传承.cs" id="1_w1ivt"]
 [ext_resource type="Shader" path="res://assets/circle.gdshader" id="2_kicxu"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_co8i7"]
@@ -24,6 +25,7 @@ z_index = -1
 position = Vector2(316, 197)
 collision_layer = 15
 collision_mask = 15
+script = ExtResource("1_w1ivt")
 metadata/_edit_group_ = true
 
 [node name="MeshInstance2D" type="MeshInstance2D" parent="."]

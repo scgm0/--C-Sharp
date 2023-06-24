@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using Godot;
 using Godot.Collections;
@@ -6,7 +5,6 @@ using Godot.Collections;
 namespace 球武道.scripts;
 
 public partial class 境界榜 : VBoxContainer {
-	private readonly IComparer<Node> _customComparer = new CustomComparer();
 	private Array<Label> _labels;
 
 	public override void _Ready() {
@@ -29,8 +27,9 @@ public partial class 境界榜 : VBoxContainer {
 		if (!arr.Any()) {
 			return;
 		}
-
-		var balls = new Array<Node>(arr.OrderBy(a => a, _customComparer));
+		
+		// var balls = new Array<Node>(arr.OrderByDescending(a => ((Ball)a).境界).ThenByDescending(a => ((Ball)a).修为));
+		var balls = new Array<Node>(arr.OrderByDescending(a => ((Ball)a).累计修为 + ((Ball)a).修为));
 		balls.Resize(10);
 		for (var i = 0; i < 10; i++) {
 			var label = _labels[i];

@@ -12,12 +12,16 @@ public partial class Ball : RigidBody2D {
 	[Signal]
 	public delegate void 属性事件EventHandler(设定.属性名 name, double num);
 
+	[Signal]
+	public delegate void 攻击事件EventHandler(Ball ball, Ball dBall);
+
 	private 设定.境界 _境界;
 	private int _年龄;
 	private int _生命 = 100;
 	private int _生命上限 = 100;
 	private int _寿命 = 50;
 	private double _修为;
+	private int _击杀数;
 	private int _tipIndex0;
 	private int _tipIndex1;
 
@@ -27,7 +31,19 @@ public partial class Ball : RigidBody2D {
 	public int 修为上限 = 120;
 	public bool 已死;
 	[Export] public double 资质 = 0.2;
+
+	public int 击杀数 {
+		set {
+			_击杀数 = value;
+			if (击杀数 % 5 == 0) {
+				EmitSignal(SignalName.属性事件, (int)设定.属性名.修为上限, Mathf.CeilToInt(修为上限 * 0.05));
+			}
+		}
+		get => _击杀数;
+	}
+
 	public MeshInstance2D Body;
+	
 
 	[Export]
 	public 设定.境界 境界 {
@@ -59,12 +75,12 @@ public partial class Ball : RigidBody2D {
 	}
 
 	public int 寿命 {
-		set {
+		private set {
 			_寿命 = value;
 			GetNode<Label>("%年龄").Text = GlData.GetAgeGroup(年龄, 寿命);
-			if (年龄 > 寿命) {
-				死($"寿尽而亡，享年{年龄 - 1}岁");
-			}
+			// if (年龄 >= 寿命) {
+			// 	死($"寿尽而亡");
+			// }
 		}
 		get => _寿命;
 	}
@@ -73,15 +89,24 @@ public partial class Ball : RigidBody2D {
 		set {
 			_年龄 = value;
 			GetNode<Label>("%年龄").Text = GlData.GetAgeGroup(年龄, 寿命);
-			if (年龄 > 寿命) {
-				死($"寿尽而亡：享年{年龄 - 1}岁");
+			if (年龄 >= 寿命) {
+				死($"寿尽而亡");
+				var cc = GlData.Singletons.Inherited.Instantiate<传承>();
+				cc.身份 = 身份;
+				cc.属性 = new 设定.属性值 {
+					资质 = 资质,
+					修为 = (累计修为 + 修为) * 0.25
+				};
+				cc.Duration = 寿命 * 1.2 * (1.0 + (int)境界 * 0.5) * 2;
+				cc.GlobalPosition = GlobalPosition;
+				AddSibling(cc);
 			}
 		}
 		get => _年龄;
 	}
 
 	public int 生命上限 {
-		set {
+		private set {
 			_生命上限 = value;
 			((ShaderMaterial)GetNode<MeshInstance2D>("%生命").Material).SetShaderParameter("fill_ratio", (double)生命 / 生命上限 * 0.5);
 		}
@@ -89,7 +114,7 @@ public partial class Ball : RigidBody2D {
 	}
 
 	public int 生命 {
-		set {
+		private set {
 			_生命 = Mathf.Min(value, 生命上限);
 			((ShaderMaterial)GetNode<MeshInstance2D>("%生命").Material).SetShaderParameter("fill_ratio", (double)生命 / 生命上限 * 0.5);
 		}
@@ -107,12 +132,12 @@ public partial class Ball : RigidBody2D {
 			par.Modulate = Body.Modulate;
 			par.GlobalPosition = GlobalPosition;
 			AddSibling(par);
-			GlData.MainLog($"[color={Body.Modulate.ToHtml()}][font_size=21]{名字}（{境界}）[/font_size][/color]{死因}");
+			GlData.MainLog($"[color={Body.Modulate.ToHtml()}][font_size=21]{名字}【{境界}】[/font_size][/color]{死因}：享年{年龄}岁");
 		};
 
 		属性事件 += (name, num) => {
 			if (num == 0) return;
-			AddTip($"{name}{(num > 0 ? "+" + num : num)}", num);
+			AddTip($"{name}{(num > 0 ? $"+{num:F1}": num):F1}", num);
 			switch (name) {
 				case 设定.属性名.寿命: break;
 				case 设定.属性名.年龄: break;
@@ -122,11 +147,18 @@ public partial class Ball : RigidBody2D {
 				case 设定.属性名.生命:
 					生命 += (int)num;
 					break;
-				case 设定.属性名.修为上限: break;
-				case 设定.属性名.修为: break;
-				case 设定.属性名.资质: break;
+				case 设定.属性名.修为上限:
+					修为上限 += (int)num;
+					break;
+				case 设定.属性名.修为:
+					修为 += num;
+					break;
+				case 设定.属性名.资质:
+					资质 += num;
+					break;
 				default: throw new ArgumentOutOfRangeException(nameof(name), name, null);
 			}
+			
 		};
 	}
 
@@ -138,7 +170,7 @@ public partial class Ball : RigidBody2D {
 		年龄 += 1;
 	}
 
-	public async void 死(string 死因) {
+	public async void 死(string 死因 = "") {
 		已死 = true;
 		RemoveFromGroup("武者");
 		RemoveFromGroup(身份);
@@ -154,19 +186,23 @@ public partial class Ball : RigidBody2D {
 	public void 突破() {
 		if (已死) return;
 		累计修为 += 修为上限;
-		修为 -= 修为上限;
+		var old修为上限 = 修为上限;
 		境界 += 1;
 		var 属性 = 设定.属性[境界];
 		Mul(this, 属性);
-		EmitSignal(SignalName.属性事件, (int)设定.属性名.生命, 生命上限 * 0.1);
+		EmitSignal(SignalName.属性事件, (int)设定.属性名.生命, (int)(生命上限 * 0.1));
 		GlData.MainLog(
 			$"[color={
 				Body.Modulate.ToHtml()
 			}][font_size=21]{
 				名字
-			}[/font_size][/color] 突破了【{
+			}[/font_size][/color] 突破了[color={
+				Body.Modulate.ToHtml()
+			}][font_size=21]【{
 				境界
-			}】： 寿命【{
+			}】[/font_size][/color]： 寿命【{
+				年龄
+			}/{
 				寿命
 			}】 生命【{
 				生命
@@ -174,11 +210,12 @@ public partial class Ball : RigidBody2D {
 				生命上限
 			}】 修为【{
 				修为
-			}/{
+				:F1}/{
 				修为上限
 			}】 资质【{
 				资质
-			}】");
+				:F1}】");
+		修为 -= old修为上限;
 	}
 
 	public async void AddTip(string text, double num) {
@@ -187,12 +224,12 @@ public partial class Ball : RigidBody2D {
 		tip.正负 = num < 0;
 		tip.AddThemeColorOverride("font_color", Body.Modulate);
 		if (num > 0) {
-			tip.Position = tip.Position with { Y = -20 };
+			tip.Position = tip.Position with { Y = -30 };
 			GetTree().CreateTimer(0.4).Timeout += () => _tipIndex0 -= 1;
 			_tipIndex0++;
 			await ToSignal(GetTree().CreateTimer((_tipIndex0 - 1) * 0.4), Timer.SignalName.Timeout);
 		} else {
-			tip.Position = tip.Position with { Y = 30 };
+			tip.Position = tip.Position with { Y = 5 };
 			GetTree().CreateTimer(0.4).Timeout += () => _tipIndex1 -= 1;
 			_tipIndex1++;
 			await ToSignal(GetTree().CreateTimer((_tipIndex1 - 1) * 0.4), Timer.SignalName.Timeout);

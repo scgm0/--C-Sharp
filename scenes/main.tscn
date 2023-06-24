@@ -1,8 +1,9 @@
-[gd_scene load_steps=13 format=3 uid="uid://bp4kxrdwo0t8m"]
+[gd_scene load_steps=14 format=3 uid="uid://bp4kxrdwo0t8m"]
 
 [ext_resource type="Script" path="res://scripts/Main.cs" id="1_e2hwx"]
 [ext_resource type="PackedScene" uid="uid://bs6fl1xr7qg8i" path="res://scenes/出生点.tscn" id="2_f5n3k"]
 [ext_resource type="Script" path="res://scripts/境界榜.cs" id="3_rqxc0"]
+[ext_resource type="Script" path="res://scripts/杀戮榜.cs" id="4_yl8ev"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_cemfa"]
 friction = 0.0
@@ -275,6 +276,7 @@ vertical_alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+script = ExtResource("4_yl8ev")
 
 [node name="Label" type="Label" parent="CanvasLayer/HBoxContainer/杀戮榜"]
 layout_mode = 2

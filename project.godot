@@ -34,12 +34,13 @@ project/assembly_name="球武道"
 [editor]
 
 movie_writer/mjpeg_quality=1.0
-movie_writer/movie_file="/home/scgm/godot4/球武道/mp4/input.avi"
+movie_writer/movie_file="/home/scgm/godot4/球武道 C Sharp/mp4/input.avi"
 movie_writer/disable_vsync=true
 
 [gui]
 
 theme/default_font_multichannel_signed_distance_field=true
+theme/default_font_generate_mipmaps=true
 
 [physics]
 

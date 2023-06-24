@@ -41,7 +41,7 @@ shader_parameter/fill_ratio = 1.0
 size = Vector2(200, 200)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_4ox4l"]
-radius = 15.0
+radius = 17.0
 
 [sub_resource type="Animation" id="Animation_v35un"]
 length = 0.001
