@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using Godot;
 
@@ -22,13 +23,15 @@ public partial class Ball : RigidBody2D {
 	private int _寿命 = 50;
 	private double _修为;
 	private int _击杀数;
-	private int _tipIndex0;
-	private int _tipIndex1;
+	private readonly List<Tip> _tip0S =  new();
+	private bool _tip0 = true;
+	private readonly List<Tip> _tip1S =  new();
+	private bool _tip1 = true;
 
-	public int 累计修为;
-	[Export] public StringName 名字;
+	[Export] public int 累计修为;
+	[Export] public string 名字;
 	[Export] public StringName 身份;
-	public int 修为上限 = 120;
+	[Export] public int 修为上限 = 120;
 	public bool 已死;
 	[Export] public double 资质 = 0.2;
 
@@ -36,7 +39,7 @@ public partial class Ball : RigidBody2D {
 		set {
 			_击杀数 = value;
 			if (击杀数 % 5 == 0) {
-				EmitSignal(SignalName.属性事件, (int)设定.属性名.修为上限, Mathf.CeilToInt(修为上限 * 0.05));
+				EmitSignal(SignalName.属性事件, (int)设定.属性名.修为上限, Mathf.CeilToInt(修为上限 * 0.1));
 			}
 		}
 		get => _击杀数;
@@ -64,7 +67,7 @@ public partial class Ball : RigidBody2D {
 
 	[Export]
 	public double 修为 {
-		private set {
+		set {
 			_修为 = Mathf.Snapped(value, 0.1);
 			((ShaderMaterial)GetNode<MeshInstance2D>("%修为").Material).SetShaderParameter("fill_ratio", 修为 / 修为上限 * 0.5);
 			if (修为 > 修为上限) {
@@ -79,7 +82,7 @@ public partial class Ball : RigidBody2D {
 	}
 
 	public int 寿命 {
-		private set {
+		set {
 			_寿命 = value;
 			GetNode<Label>("%年龄").Text = GlData.GetAgeGroup(年龄, 寿命);
 			// if (年龄 >= 寿命) {
@@ -95,7 +98,7 @@ public partial class Ball : RigidBody2D {
 			GetNode<Label>("%年龄").Text = GlData.GetAgeGroup(年龄, 寿命);
 			if (年龄 >= 寿命) {
 				死($"寿尽而亡");
-				var cc = GlData.Singletons.Inherited.Instantiate<传承>();
+				var cc = GlData.Inherited.Instantiate<传承>();
 				cc.身份 = 身份;
 				cc.属性 = new 设定.属性值 {
 					资质 = 资质,
@@ -110,7 +113,7 @@ public partial class Ball : RigidBody2D {
 	}
 
 	public int 生命上限 {
-		private set {
+		set {
 			_生命上限 = value;
 			((ShaderMaterial)GetNode<MeshInstance2D>("%生命").Material).SetShaderParameter("fill_ratio", (double)生命 / 生命上限 * 0.5);
 		}
@@ -118,7 +121,7 @@ public partial class Ball : RigidBody2D {
 	}
 
 	public int 生命 {
-		private set {
+		set {
 			_生命 = Mathf.Min(value, 生命上限);
 			((ShaderMaterial)GetNode<MeshInstance2D>("%生命").Material).SetShaderParameter("fill_ratio", (double)生命 / 生命上限 * 0.5);
 		}
@@ -131,7 +134,7 @@ public partial class Ball : RigidBody2D {
 		Body.Modulate = 设定.阵营[身份];
 		GetNode<Label>("%名字").Text = 名字;
 		死亡事件 += 死因 => {
-			var par = GlData.Singletons.Particles.Instantiate<GpuParticles2D>();
+			var par = GlData.Particles.Instantiate<GpuParticles2D>();
 			par.Emitting = true;
 			par.Modulate = Body.Modulate;
 			par.GlobalPosition = GlobalPosition;
@@ -141,7 +144,7 @@ public partial class Ball : RigidBody2D {
 
 		属性事件 += (name, num) => {
 			if (num == 0) return;
-			AddTip($"{name}{(num > 0 ? $"+{num:F1}" : num):F1}", num);
+			AddTip($"{name}{(num > 0 ? $"+{num:F1}" : num):F1}", num < 0);
 			switch (name) {
 				case 设定.属性名.寿命: break;
 				case 设定.属性名.年龄: break;
@@ -165,6 +168,22 @@ public partial class Ball : RigidBody2D {
 		};
 	}
 
+	public override void _Process(double delta) {
+		if (_tip0S.Count > 0 && _tip0) {
+			_tip0 = false;
+			AddChild(_tip0S[0]);
+			_tip0S.RemoveAt(0);
+			GetTree().CreateTimer(0.4).Timeout += () => _tip0 = true;
+		}
+		
+		if (_tip1S.Count > 0 && _tip1) {
+			_tip1 = false;
+			AddChild(_tip1S[0]);
+			_tip1S.RemoveAt(0);
+			GetTree().CreateTimer(0.4).Timeout += () => _tip1 = true;
+		}
+	}
+
 	public void 过月() {
 		修为 += 资质;
 	}
@@ -183,6 +202,7 @@ public partial class Ball : RigidBody2D {
 		SetDeferred("freeze", true);
 		GetNode("CollisionShape2D").SetDeferred("disabled", true);
 		await ToSignal(GetTree().CreateTimer(2), Timer.SignalName.Timeout);
+		// GlData.Singletons.BallReturnPoll(this);
 		QueueFree();
 	}
 
@@ -193,6 +213,7 @@ public partial class Ball : RigidBody2D {
 		境界++;
 		Mul(this, 设定.属性[境界]);
 		EmitSignal(SignalName.属性事件, (int)设定.属性名.生命, (int)(生命上限 * 0.1));
+		EmitSignal(SignalName.属性事件, (int)设定.属性名.资质, 0.1);
 		GlData.MainLog(
 			$"[color={
 				Body.Modulate.ToHtml()
@@ -220,24 +241,16 @@ public partial class Ball : RigidBody2D {
 		修为 -= old修为上限;
 	}
 
-	public async void AddTip(string text, double num) {
-		var tip = GlData.Singletons.Tip.Instantiate<Tip>();
+	public async void AddTip(string text, bool 正负) {
+		var tip = GlData.Tip.Instantiate<Tip>();
 		tip.Text = text;
-		tip.正负 = num < 0;
+		tip.正负 = 正负;
 		tip.AddThemeColorOverride("font_color", Body.Modulate);
-		if (num > 0) {
-			tip.Position = tip.Position with { Y = -30 };
-			GetTree().CreateTimer(0.4).Timeout += () => _tipIndex0 -= 1;
-			_tipIndex0++;
-			await ToSignal(GetTree().CreateTimer((_tipIndex0 - 1) * 0.4), Timer.SignalName.Timeout);
+		if (!正负) {
+			_tip0S.Add(tip);
 		} else {
-			tip.Position = tip.Position with { Y = 5 };
-			GetTree().CreateTimer(0.4).Timeout += () => _tipIndex1 -= 1;
-			_tipIndex1++;
-			await ToSignal(GetTree().CreateTimer((_tipIndex1 - 1) * 0.4), Timer.SignalName.Timeout);
+			_tip1S.Add(tip);
 		}
-
-		AddChild(tip);
 	}
 
 	public static void Add(Ball a, 设定.属性值 b) {

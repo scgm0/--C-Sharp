@@ -42,7 +42,7 @@ public static class 设定 {
 		合道同归,
 		独步乾坤,
 
-		武神
+		武圣
 	}
 
 	public static readonly Dictionary<string, Color> 阵营 = new() {
@@ -63,7 +63,7 @@ public static class 设定 {
 		{ 境界.滴血重生, new 属性值 { 寿命 = 2.5, 生命上限 = 2.5, 生命 = 2.5, 修为上限 = 4.0 } },
 		{ 境界.合道同归, new 属性值 { 寿命 = 2.5, 生命上限 = 2.5, 生命 = 2.5, 修为上限 = 4.0 } },
 		{ 境界.独步乾坤, new 属性值 { 寿命 = 2.5, 生命上限 = 2.5, 生命 = 2.5, 修为上限 = 4.0 } },
-		{ 境界.武神, new 属性值 { 寿命 = 3.0, 生命上限 = 3.0, 生命 = 3.0, 修为上限 = 5.0 } }
+		{ 境界.武圣, new 属性值 { 寿命 = 3.0, 生命上限 = 3.0, 生命 = 3.0, 修为上限 = 5.0 } }
 	};
 }
 
@@ -71,10 +71,12 @@ public partial class GlData : Node {
 	[Signal]
 	public delegate void LogEventHandler(string text);
 
-	public PackedScene Ball;
-	public PackedScene Particles;
-	public PackedScene Tip;
-	public PackedScene Inherited;
+	public static PackedScene Ball;
+	public static PackedScene Particles;
+	public static PackedScene Tip;
+	public static PackedScene Inherited;
+
+	public static List<Ball> BallPool = new List<Ball>();
 
 	public GlData() {
 		Singletons = this;
@@ -97,6 +99,38 @@ public partial class GlData : Node {
 		if (Input.IsActionPressed("ui_accept")) {
 			GetTree().Paused = !GetTree().Paused;
 		}
+	}
+
+	public static Ball BallPush() {
+		Ball ball;
+		if (BallPool.Count < 1) {
+			ball = Ball.Instantiate<Ball>();
+		} else {
+			ball = BallPool[0];
+			BallPool.RemoveAt(0);
+		}
+		ball.SetProcess(true);
+		ball.已死 = false;
+		ball.境界 = 设定.境界.武徒;
+		ball.年龄 = 0;
+		ball.SetDeferred("sleeping", false);
+		ball.SetDeferred("freeze", false);
+		ball.GetNode("CollisionShape2D").SetDeferred("disabled", false);
+		return ball;
+	}
+
+	public static void BallReturnPoll(Ball ball) {
+		BallPool.Add(ball);
+		ball.SetProcess(false);
+		ball.修为 = 0.0;
+		ball.修为上限 = 120;
+		ball.生命 = 100;
+		ball.生命上限 = 100;
+		ball.寿命 = 50;
+		ball.年龄 = 0;
+		ball.境界 = 设定.境界.武徒;
+		ball.击杀数 = 0;
+		ball.累计修为 = 0;
 	}
 
 	public static void MainLog(string text) {
