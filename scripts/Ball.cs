@@ -247,8 +247,10 @@ public partial class Ball : RigidBody2D {
 		tip.正负 = 正负;
 		tip.AddThemeColorOverride("font_color", Body.Modulate);
 		if (!正负) {
+			tip.Position = tip.Position with { Y = -30 };
 			_tip0S.Add(tip);
 		} else {
+			tip.Position = tip.Position with { Y = 5 };
 			_tip1S.Add(tip);
 		}
 	}
