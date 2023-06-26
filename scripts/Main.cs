@@ -23,7 +23,7 @@ public partial class Main : Node2D {
 
 	public override void _Ready() {
 		GlData.Singletons.Log += OnSingletonsOnLog;
-		
+
 		年月 = GetNode<Label>("%年月");
 		日志 = GetNode<RichTextLabel>("%日志");
 		境界榜 = GetNode<境界榜>("%境界榜");
@@ -49,6 +49,7 @@ public partial class Main : Node2D {
 			黄出生点.Freeze = false;
 			蓝出生点.Freeze = false;
 			绿出生点.Freeze = false;
+			GetNode<RigidBody2D>("%机缘点").Freeze = false;
 
 			红出生点.GetNode<AnimationPlayer>("AnimationPlayer").Play("闪烁");
 			黄出生点.GetNode<AnimationPlayer>("AnimationPlayer").Play("闪烁");
@@ -84,7 +85,7 @@ public partial class Main : Node2D {
 				绿出生点.GetNode<AnimationPlayer>("AnimationPlayer").Stop();
 				GetNode<Timer>("Timer").Stop();
 				var arr = new Array<Ball>((Array)GetTree().GetNodesInGroup("武者"));
-				var balls = arr.OrderByDescending(a => a.境界).ThenByDescending(a => a.修为).ToArray();
+				var balls = arr.OrderByDescending(a => a.总修为).ToArray();
 				var one = balls[0];
 				foreach (var ball in balls) {
 					if (ball.身份 != one.身份) {
@@ -132,7 +133,11 @@ public partial class Main : Node2D {
 			ball.修为上限
 		}\n资质：{
 			ball.资质
-			:F1}";
+			:F1}\n伤害：{
+			ball.伤害
+			:F1}\n杀敌：{
+			ball.击杀数
+		}";
 	}
 
 	public static Ball 出生(StringName 身份, Vector2 pos, Ball ball = null) {
@@ -153,55 +158,63 @@ public partial class Main : Node2D {
 					ball.名字
 				}[/font_size][/color] 出生了：境界【{
 					ball.境界
-				}】 寿命【{
+				}】寿命【{
 					ball.年龄
 				}/{
 					ball.寿命
-				}】 生命【{
+				}】生命【{
 					ball.生命
 				}/{
 					ball.生命上限
-				}】 修为【{
+				}】修为【{
 					ball.修为
 					:F1}/{
 					ball.修为上限
-				}】 资质【{
+				}】资质【{
 					ball.资质
+					:F1}】伤害【{
+					ball.伤害
 					:F1}】");
 			ball.BodyEntered += body => {
 				if (body is Ball 敌人) {
 					if (ball.身份 != 敌人.身份) {
-						var 伤害 = 10 * ((int)ball.境界 + 1.0) * (1.0 + (ball.境界 - 敌人.境界) * 0.1);
+						var 伤害 = Mathf.CeilToInt(10 * ((int)ball.境界 + 1.0) * (1.0 + (ball.境界 - 敌人.境界) * 0.1) * ball.伤害);
+						var 敌伤 = Mathf.CeilToInt(10 * ((int)敌人.境界 + 1.0) * (1.0 + (敌人.境界 - ball.境界) * 0.1) * 敌人.伤害);
 						var 收获 = Mathf.Snapped(敌人.修为上限 * 0.05, 0.1);
+
 						敌人.EmitSignal(Ball.SignalName.属性事件, (int)设定.属性名.生命, -伤害);
-						ball.EmitSignal(Ball.SignalName.属性事件, (int)设定.属性名.修为, 收获);
-						if (敌人.生命 <= 0) {
-							敌人.死($"被 [color={
-								ball.Body.Modulate.ToHtml()
-							}][font_size=21]{
-								ball.名字
-							}【{
-								ball.境界
-							}】[/font_size][/color]杀死了");
-
-							ball.击杀数++;
-
-							var x = 敌人.修为上限 * 0.1;
-							if (ball.境界 <= 敌人.境界) {
-								x += 敌人.累计修为 * 0.05;
-								x += (1 + (敌人.境界 - ball.境界) * 0.1) * GD.RandRange(敌人.修为 * 0.5, 敌人.修为 * 0.8);
-								ball.EmitSignal(Ball.SignalName.属性事件,
-									(int)设定.属性名.资质,
-									Mathf.Snapped(Mathf.Max(敌人.资质 * 0.5, 0.1), 0.1));
-							} else {
-								x += 敌人.累计修为 * 0.05 / (ball.境界 - 敌人.境界 + 1);
-								x += (1 / (double)(ball.境界 - 敌人.境界)) * GD.RandRange(敌人.修为 * 0.5, 敌人.修为 * 0.8);
-								ball.EmitSignal(Ball.SignalName.属性事件, (int)设定.属性名.资质, 
-									Mathf.Snapped(敌人.资质 * 0.5 / (ball.境界 - 敌人.境界 + 1), 0.1));
-							}
-
-							ball.EmitSignal(Ball.SignalName.属性事件, (int)设定.属性名.修为, Mathf.Snapped(x, 0.1));
+						if (ball.生命 > 敌伤 || ball.修为 + 收获 > ball.修为上限) {
+							ball.EmitSignal(Ball.SignalName.属性事件, (int)设定.属性名.修为, 收获);
 						}
+
+						if (敌人.生命 > 0) return;
+						敌人.死($"被 [color={
+							ball.Body.Modulate.ToHtml()
+						}][font_size=21]{
+							ball.名字
+						}【{
+							ball.境界
+						}】[/font_size][/color]杀死了");
+
+						var x = 敌人.修为上限 * 0.1;
+						if (ball.境界 <= 敌人.境界) {
+							x += 敌人.累计修为 * 0.05;
+							x += GD.RandRange(敌人.修为 * 0.7, 敌人.修为);
+							x *= 1 + (敌人.境界 - ball.境界) * 0.1;
+							ball.EmitSignal(Ball.SignalName.属性事件,
+								(int)设定.属性名.资质,
+								Mathf.Snapped(Mathf.Max(敌人.资质 * 0.5, 0.1), 0.1));
+						} else {
+							x += 敌人.累计修为 * 0.05 / (ball.境界 - 敌人.境界 + 1);
+							x += (1 / (double)(ball.境界 - 敌人.境界)) * GD.RandRange(敌人.修为 * 0.5, 敌人.修为 * 0.8);
+							ball.EmitSignal(Ball.SignalName.属性事件,
+								(int)设定.属性名.资质,
+								Mathf.Snapped(敌人.资质 * 0.5 / (ball.境界 - 敌人.境界 + 1), 0.1));
+						}
+
+						ball.EmitSignal(Ball.SignalName.属性事件, (int)设定.属性名.修为, Mathf.Snapped(x, 0.1));
+
+						ball.击杀数++;
 					}
 				}
 			};

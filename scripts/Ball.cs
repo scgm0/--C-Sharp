@@ -23,9 +23,9 @@ public partial class Ball : RigidBody2D {
 	private int _寿命 = 50;
 	private double _修为;
 	private int _击杀数;
-	private readonly List<Tip> _tip0S =  new();
+	private readonly List<Tip> _tip0S = new();
 	private bool _tip0 = true;
-	private readonly List<Tip> _tip1S =  new();
+	private readonly List<Tip> _tip1S = new();
 	private bool _tip1 = true;
 
 	[Export] public int 累计修为;
@@ -34,12 +34,18 @@ public partial class Ball : RigidBody2D {
 	[Export] public int 修为上限 = 120;
 	public bool 已死;
 	[Export] public double 资质 = 0.2;
+	public double 伤害 = 1.0;
 
 	public int 击杀数 {
 		set {
 			_击杀数 = value;
 			if (击杀数 % 5 == 0) {
 				EmitSignal(SignalName.属性事件, (int)设定.属性名.修为上限, Mathf.CeilToInt(修为上限 * 0.1));
+			}
+
+			if (击杀数 % 10 == 0) {
+				EmitSignal(SignalName.属性事件, (int)设定.属性名.寿命, -Mathf.CeilToInt(寿命 * 0.1));
+				EmitSignal(SignalName.属性事件, (int)设定.属性名.修为, -修为 * 0.1);
 			}
 		}
 		get => _击杀数;
@@ -85,9 +91,18 @@ public partial class Ball : RigidBody2D {
 		set {
 			_寿命 = value;
 			GetNode<Label>("%年龄").Text = GlData.GetAgeGroup(年龄, 寿命);
-			// if (年龄 >= 寿命) {
-			// 	死($"寿尽而亡");
-			// }
+			if (年龄 >= 寿命) {
+				死($"寿尽而亡");
+				var cc = GlData.Inherited.Instantiate<传承>();
+				cc.身份 = 身份;
+				cc.属性 = new 设定.属性值 {
+					资质 = 资质,
+					修为 = 总修为 * 0.25
+				};
+				cc.Duration = 寿命 * 1.2 * (1.0 + (int)境界 * 0.5) * 2;
+				cc.GlobalPosition = GlobalPosition;
+				AddSibling(cc);
+			}
 		}
 		get => _寿命;
 	}
@@ -144,7 +159,7 @@ public partial class Ball : RigidBody2D {
 
 		属性事件 += (name, num) => {
 			if (num == 0) return;
-			AddTip($"{name}{(num > 0 ? $"+{num:F1}" : num):F1}", num < 0);
+			AddTip($"{name} {(num > 0 ? $"+{num:F1}" : num):F1}", num < 0);
 			switch (name) {
 				case 设定.属性名.寿命: break;
 				case 设定.属性名.年龄: break;
@@ -175,7 +190,7 @@ public partial class Ball : RigidBody2D {
 			_tip0S.RemoveAt(0);
 			GetTree().CreateTimer(0.4).Timeout += () => _tip0 = true;
 		}
-		
+
 		if (_tip1S.Count > 0 && _tip1) {
 			_tip1 = false;
 			AddChild(_tip1S[0]);
@@ -223,25 +238,27 @@ public partial class Ball : RigidBody2D {
 				Body.Modulate.ToHtml()
 			}][font_size=21]【{
 				境界
-			}】[/font_size][/color]： 寿命【{
+			}】[/font_size][/color]：寿命【{
 				年龄
 			}/{
 				寿命
-			}】 生命【{
+			}】生命【{
 				生命
 			}/{
 				生命上限
-			}】 修为【{
+			}】修为【{
 				修为 - old修为上限
 				:F1}/{
 				修为上限
-			}】 资质【{
+			}】资质【{
 				资质
+				:F1}】伤害【{
+				伤害
 				:F1}】");
 		修为 -= old修为上限;
 	}
 
-	public async void AddTip(string text, bool 正负) {
+	public void AddTip(string text, bool 正负) {
 		var tip = GlData.Tip.Instantiate<Tip>();
 		tip.Text = text;
 		tip.正负 = 正负;
@@ -273,5 +290,6 @@ public partial class Ball : RigidBody2D {
 		if (b.修为上限 != null) a.修为上限 = (int)(a.修为上限 * b.修为上限);
 		if (b.修为 != null) a.修为 *= (double)b.修为;
 		if (b.资质 != null) a.资质 *= (double)b.资质;
+		if (b.伤害 != null) a.伤害 = Mathf.Snapped(a.伤害 * (double)b.伤害, 0.1);
 	}
 }

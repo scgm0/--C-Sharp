@@ -126,25 +126,27 @@ position = Vector2(500, 1000)
 linear_velocity = Vector2(0, -100)
 metadata/_edit_group_ = true
 
+[node name="机缘点" parent="StaticBody2D/地图" instance=ExtResource("2_f5n3k")]
+unique_name_in_owner = true
+visible = false
+position = Vector2(960, 80)
+linear_velocity = Vector2(100, 100)
+
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 layer = -1
 
 [node name="Label" type="Label" parent="CanvasLayer"]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -11.1667
-offset_right = 20.0
-offset_bottom = 11.1667
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.0980392)
 theme_override_font_sizes/font_size = 100
 text = "神麤詭末
 "
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="年月" type="Label" parent="CanvasLayer"]
 unique_name_in_owner = true
@@ -173,6 +175,7 @@ offset_bottom = -30.0
 grow_horizontal = 0
 grow_vertical = 0
 theme_override_colors/default_color = Color(0.584314, 0.584314, 0.584314, 1)
+theme_override_font_sizes/normal_font_size = 15
 bbcode_enabled = true
 scroll_active = false
 scroll_following = true
