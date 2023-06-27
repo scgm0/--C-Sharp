@@ -5,6 +5,7 @@ namespace 球武道.scripts;
 public partial class 传承 : Area2D {
 	public double Duration;
 	public 设定.属性值 属性;
+	public string name;
 	public StringName 身份;
 	private double _计时 = 1.0;
 	private MeshInstance2D _meshInstance2D;
@@ -52,7 +53,7 @@ public partial class 传承 : Area2D {
 						};
 						// Modulate = Modulate with { A = (float)(Modulate.A - 0.1) };
 						计时 += 0.01;
-						ball.死($"死于无名传承");
+						ball.死($"陨落于【{name}】之禁地");
 					} else {
 						
 						QueueFree();

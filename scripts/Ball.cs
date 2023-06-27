@@ -91,20 +91,20 @@ public partial class Ball : RigidBody2D {
 		set {
 			_寿命 = value;
 			GetNode<Label>("%年龄").Text = GlData.GetAgeGroup(年龄, 寿命);
-			if (年龄 >= 寿命) {
-				死($"寿尽而亡");
-				var cc = GlData.Inherited.Instantiate<传承>();
-				cc.身份 = 身份;
-				cc.属性 = new 设定.属性值 {
-					资质 = 资质 * (1.0 + (int)境界 * 0.1),
-					修为 = 总修为 * 0.25 * (1.0 + (int)境界 * 0.1),
-					生命 = (生命 * 0.5 + 生命上限 * 0.1) * (1.0 + (int)境界 * 0.1),
-					伤害 = 伤害
-				};
-				cc.Duration = 寿命 * (1.0 + (int)境界 * 0.2) * 0.5;
-				cc.GlobalPosition = GlobalPosition;
-				AddSibling(cc);
-			}
+			if (年龄 < 寿命) return;
+			死($"寿尽而亡");
+			var cc = GlData.Inherited.Instantiate<传承>();
+			cc.name = 名字;
+			cc.身份 = 身份;
+			cc.属性 = new 设定.属性值 {
+				资质 = 资质 * (1.0 + (int)境界 * 0.1),
+				修为 = 总修为 * 0.25 * (1.0 + (int)境界 * 0.1),
+				生命 = (生命 * 0.5 + 生命上限 * 0.1) * (1.0 + (int)境界 * 0.1),
+				伤害 = 伤害
+			};
+			cc.Duration = 寿命 * (1.0 + (int)境界 * 0.2) * 0.5;
+			cc.GlobalPosition = GlobalPosition;
+			AddSibling(cc);
 		}
 		get => _寿命;
 	}
@@ -113,20 +113,20 @@ public partial class Ball : RigidBody2D {
 		set {
 			_年龄 = value;
 			GetNode<Label>("%年龄").Text = GlData.GetAgeGroup(年龄, 寿命);
-			if (年龄 >= 寿命) {
-				死($"寿尽而亡");
-				var cc = GlData.Inherited.Instantiate<传承>();
-				cc.身份 = 身份;
-				cc.属性 = new 设定.属性值 {
-					资质 = 资质 * (1.0 + (int)境界 * 0.1),
-					修为 = 总修为 * 0.25 * (1.0 + (int)境界 * 0.1),
-					生命 = (生命 * 0.5 + 生命上限 * 0.1) * (1.0 + (int)境界 * 0.1),
-					伤害 = 伤害
-				};
-				cc.Duration = 寿命 * (1.0 + (int)境界 * 0.2) * 0.5;
-				cc.GlobalPosition = GlobalPosition;
-				AddSibling(cc);
-			}
+			if (年龄 < 寿命) return;
+			死($"寿尽而亡");
+			var cc = GlData.Inherited.Instantiate<传承>();
+			cc.name = 名字;
+			cc.身份 = 身份;
+			cc.属性 = new 设定.属性值 {
+				资质 = 资质 * (1.0 + (int)境界 * 0.1),
+				修为 = 总修为 * 0.25 * (1.0 + (int)境界 * 0.1),
+				生命 = (生命 * 0.5 + 生命上限 * 0.1) * (1.0 + (int)境界 * 0.1),
+				伤害 = 伤害
+			};
+			cc.Duration = 寿命 * (1.0 + (int)境界 * 0.2) * 0.5;
+			cc.GlobalPosition = GlobalPosition;
+			AddSibling(cc);
 		}
 		get => _年龄;
 	}
