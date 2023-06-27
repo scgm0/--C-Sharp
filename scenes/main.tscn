@@ -46,6 +46,7 @@ glow_hdr_scale = 4.0
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_e2hwx")
+"限时" = 2000
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
 collision_layer = 3
@@ -396,8 +397,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Timer" type="Timer" parent="."]
-process_callback = 0
-wait_time = 0.1
+wait_time = 0.05
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_y65u6")

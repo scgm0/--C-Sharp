@@ -1,11 +1,15 @@
 using System.Linq;
 using Godot;
 using Godot.Collections;
+using Timer = Godot.Timer;
 
 namespace 球武道.scripts;
 
 public partial class Main : Node2D {
-	private int _限时 = 100 * 10;
+	private bool _t = true;
+	
+	[Export]
+	public int 限时 = 100;
 
 	public CanvasGroup 地图;
 	public RigidBody2D 红出生点;
@@ -20,9 +24,19 @@ public partial class Main : Node2D {
 	public 杀戮榜 杀戮榜;
 	public int 月 = 1;
 	public int 年;
+	
 
 	public override void _Ready() {
 		GlData.Singletons.Log += OnSingletonsOnLog;
+		// _thread = new Thread(() => {
+		// 	while (年 <= 限时) {
+		// 		Thread.Sleep(50);
+		// 		CallDeferred("_OnTimerTimeout");
+		// 		if(年 > 限时) return;
+		// 	}
+		// 	
+		// });
+		// Engine.TimeScale = 2.0;
 
 		年月 = GetNode<Label>("%年月");
 		日志 = GetNode<RichTextLabel>("%日志");
@@ -39,7 +53,7 @@ public partial class Main : Node2D {
 		蓝出生点.Modulate = 设定.阵营["蓝"];
 		绿出生点.Modulate = 设定.阵营["绿"];
 
-		GetNode<Label>("CanvasLayer2/ColorRect/Label").Text = $"限时 {_限时} 年，修为最高者所在的阵营获胜";
+		GetNode<Label>("CanvasLayer2/ColorRect/Label").Text = $"限时 {限时} 年，修为最高者所在的阵营获胜";
 		var tween = CreateTween();
 		tween.TweenInterval(2);
 		tween.TweenProperty(GetNode<Label>("CanvasLayer2/ColorRect/Label"), "modulate:a", 0, 0.5);
@@ -57,6 +71,7 @@ public partial class Main : Node2D {
 			绿出生点.GetNode<AnimationPlayer>("AnimationPlayer").Play("闪烁");
 
 			GetNode<Timer>("Timer").Start();
+			// _thread.Start();
 			地图.AddChild(出生("红", 红出生点.GlobalPosition));
 			地图.AddChild(出生("黄", 黄出生点.GlobalPosition));
 			地图.AddChild(出生("绿", 绿出生点.GlobalPosition));
@@ -78,12 +93,14 @@ public partial class Main : Node2D {
 				地图.AddChild(出生("蓝", 蓝出生点.GlobalPosition));
 			}
 
-			if (年 > _限时) {
+			if (年 > 限时) {
+				// _t = false;
 				红出生点.GetNode<AnimationPlayer>("AnimationPlayer").Stop();
 				黄出生点.GetNode<AnimationPlayer>("AnimationPlayer").Stop();
 				蓝出生点.GetNode<AnimationPlayer>("AnimationPlayer").Stop();
 				绿出生点.GetNode<AnimationPlayer>("AnimationPlayer").Stop();
 				GetNode<Timer>("Timer").Stop();
+				
 				var arr = new Array<Ball>((Array)GetTree().GetNodesInGroup("武者"));
 				var balls = arr.OrderByDescending(a => a.总修为).ToArray();
 				var one = balls[0];

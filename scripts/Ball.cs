@@ -20,7 +20,7 @@ public partial class Ball : RigidBody2D {
 	private int _年龄;
 	private int _生命 = 100;
 	private int _生命上限 = 100;
-	private int _寿命 = 50;
+	private int _寿命 = 80;
 	private double _修为;
 	private int _击杀数;
 	private readonly List<Tip> _tip0S = new();
@@ -33,7 +33,7 @@ public partial class Ball : RigidBody2D {
 	[Export] public StringName 身份;
 	[Export] public int 修为上限 = 120;
 	public bool 已死;
-	[Export] public double 资质 = 0.2;
+	[Export] public double 资质 = 0.1;
 	public double 伤害 = 1.0;
 
 	public int 击杀数 {
@@ -96,10 +96,12 @@ public partial class Ball : RigidBody2D {
 				var cc = GlData.Inherited.Instantiate<传承>();
 				cc.身份 = 身份;
 				cc.属性 = new 设定.属性值 {
-					资质 = 资质,
-					修为 = 总修为 * 0.25
+					资质 = 资质 * (1.0 + (int)境界 * 0.1),
+					修为 = 总修为 * 0.25 * (1.0 + (int)境界 * 0.1),
+					生命 = (生命 * 0.5 + 生命上限 * 0.1) * (1.0 + (int)境界 * 0.1),
+					伤害 = 伤害
 				};
-				cc.Duration = 寿命 * 1.2 * (1.0 + (int)境界 * 0.5) * 2;
+				cc.Duration = 寿命 * (1.0 + (int)境界 * 0.2) * 0.5;
 				cc.GlobalPosition = GlobalPosition;
 				AddSibling(cc);
 			}
@@ -116,10 +118,12 @@ public partial class Ball : RigidBody2D {
 				var cc = GlData.Inherited.Instantiate<传承>();
 				cc.身份 = 身份;
 				cc.属性 = new 设定.属性值 {
-					资质 = 资质,
-					修为 = 总修为 * 0.25
+					资质 = 资质 * (1.0 + (int)境界 * 0.1),
+					修为 = 总修为 * 0.25 * (1.0 + (int)境界 * 0.1),
+					生命 = (生命 * 0.5 + 生命上限 * 0.1) * (1.0 + (int)境界 * 0.1),
+					伤害 = 伤害
 				};
-				cc.Duration = 寿命 * 1.2 * (1.0 + (int)境界 * 0.5) * 2;
+				cc.Duration = 寿命 * (1.0 + (int)境界 * 0.2) * 0.5;
 				cc.GlobalPosition = GlobalPosition;
 				AddSibling(cc);
 			}
@@ -153,6 +157,7 @@ public partial class Ball : RigidBody2D {
 			par.Emitting = true;
 			par.Modulate = Body.Modulate;
 			par.GlobalPosition = GlobalPosition;
+			par.Lifetime *= Engine.TimeScale;
 			AddSibling(par);
 			GlData.MainLog($"[color={Body.Modulate.ToHtml()}][font_size=21]{名字}【{境界}】[/font_size][/color]{死因}：享年{年龄}岁");
 		};
