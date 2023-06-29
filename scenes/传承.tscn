@@ -1,7 +1,8 @@
-[gd_scene load_steps=7 format=3 uid="uid://dw4v2wkpco5pj"]
+[gd_scene load_steps=13 format=3 uid="uid://dw4v2wkpco5pj"]
 
 [ext_resource type="Script" path="res://scripts/传承.cs" id="1_w1ivt"]
 [ext_resource type="Shader" path="res://assets/circle.gdshader" id="2_kicxu"]
+[ext_resource type="Texture2D" uid="uid://dsya4vduliktc" path="res://assets/2d_circle_light.png" id="3_4glw6"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_co8i7"]
 size = Vector2(20, 20)
@@ -20,6 +21,37 @@ shader_parameter/fill_ratio = 1.0
 [sub_resource type="QuadMesh" id="QuadMesh_21gk8"]
 size = Vector2(40, 40)
 
+[sub_resource type="Curve" id="Curve_x0hyw"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_oqys8"]
+curve = SubResource("Curve_x0hyw")
+
+[sub_resource type="Curve" id="Curve_nh1kx"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_5rl0y"]
+curve = SubResource("Curve_nh1kx")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_0w1qm"]
+emission_shape = 6
+emission_ring_axis = Vector3(0, 0, 1)
+emission_ring_height = 40.0
+emission_ring_radius = 40.0
+emission_ring_inner_radius = 20.0
+particle_flag_disable_z = true
+gravity = Vector3(0, 0, 0)
+orbit_velocity_min = 0.15
+orbit_velocity_max = 0.5
+orbit_velocity_curve = SubResource("CurveTexture_oqys8")
+radial_accel_min = -80.0
+radial_accel_max = -80.0
+radial_accel_curve = SubResource("CurveTexture_5rl0y")
+scale_min = 0.01
+scale_max = 0.04
+
 [node name="传承" type="Area2D"]
 z_index = -1
 position = Vector2(316, 197)
@@ -37,3 +69,9 @@ shape = SubResource("RectangleShape2D_jox80")
 [node name="MeshInstance2D2" type="MeshInstance2D" parent="."]
 material = SubResource("ShaderMaterial_bno7y")
 mesh = SubResource("QuadMesh_21gk8")
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
+emitting = false
+amount = 10
+process_material = SubResource("ParticleProcessMaterial_0w1qm")
+texture = ExtResource("3_4glw6")

@@ -1,9 +1,11 @@
-[gd_scene load_steps=14 format=3 uid="uid://bp4kxrdwo0t8m"]
+[gd_scene load_steps=16 format=3 uid="uid://bp4kxrdwo0t8m"]
 
 [ext_resource type="Script" path="res://scripts/Main.cs" id="1_e2hwx"]
 [ext_resource type="PackedScene" uid="uid://bs6fl1xr7qg8i" path="res://scenes/出生点.tscn" id="2_f5n3k"]
 [ext_resource type="Script" path="res://scripts/境界榜.cs" id="3_rqxc0"]
+[ext_resource type="LabelSettings" uid="uid://t6gs2dhkqdxe" path="res://assets/榜单.tres" id="4_u81o2"]
 [ext_resource type="Script" path="res://scripts/杀戮榜.cs" id="4_yl8ev"]
+[ext_resource type="Script" path="res://scripts/资质榜.cs" id="5_lndp6"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_cemfa"]
 friction = 0.0
@@ -164,6 +166,10 @@ text = "0年1月"
 
 [node name="日志" type="RichTextLabel" parent="CanvasLayer"]
 unique_name_in_owner = true
+process_thread_group = 1
+process_thread_group_order = 0
+process_thread_messages = 0
+custom_minimum_size = Vector2(380, 500)
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
@@ -180,6 +186,8 @@ theme_override_font_sizes/normal_font_size = 15
 bbcode_enabled = true
 scroll_active = false
 scroll_following = true
+shortcut_keys_enabled = false
+threaded = true
 
 [node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer"]
 anchors_preset = 1
@@ -202,7 +210,7 @@ script = ExtResource("3_rqxc0")
 [node name="Label" type="Label" parent="CanvasLayer/HBoxContainer/境界榜"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-text = "修为榜"
+text = "境界榜"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -210,6 +218,7 @@ vertical_alignment = 1
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 25
+label_settings = ExtResource("4_u81o2")
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -217,6 +226,7 @@ vertical_alignment = 1
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 25
+label_settings = ExtResource("4_u81o2")
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -224,6 +234,7 @@ vertical_alignment = 1
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 25
+label_settings = ExtResource("4_u81o2")
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -231,6 +242,7 @@ vertical_alignment = 1
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 25
+label_settings = ExtResource("4_u81o2")
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -238,6 +250,7 @@ vertical_alignment = 1
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 25
+label_settings = ExtResource("4_u81o2")
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -245,6 +258,7 @@ vertical_alignment = 1
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 25
+label_settings = ExtResource("4_u81o2")
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -252,6 +266,7 @@ vertical_alignment = 1
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 25
+label_settings = ExtResource("4_u81o2")
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -259,6 +274,7 @@ vertical_alignment = 1
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 25
+label_settings = ExtResource("4_u81o2")
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -266,6 +282,7 @@ vertical_alignment = 1
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 25
+label_settings = ExtResource("4_u81o2")
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -273,6 +290,7 @@ vertical_alignment = 1
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 25
+label_settings = ExtResource("4_u81o2")
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -293,6 +311,7 @@ vertical_alignment = 1
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 25
+label_settings = ExtResource("4_u81o2")
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -300,6 +319,7 @@ vertical_alignment = 1
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 25
+label_settings = ExtResource("4_u81o2")
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -307,6 +327,7 @@ vertical_alignment = 1
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 25
+label_settings = ExtResource("4_u81o2")
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -314,6 +335,7 @@ vertical_alignment = 1
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 25
+label_settings = ExtResource("4_u81o2")
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -321,6 +343,7 @@ vertical_alignment = 1
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 25
+label_settings = ExtResource("4_u81o2")
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -328,6 +351,7 @@ vertical_alignment = 1
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 25
+label_settings = ExtResource("4_u81o2")
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -335,6 +359,7 @@ vertical_alignment = 1
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 25
+label_settings = ExtResource("4_u81o2")
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -342,6 +367,7 @@ vertical_alignment = 1
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 25
+label_settings = ExtResource("4_u81o2")
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -349,6 +375,7 @@ vertical_alignment = 1
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 25
+label_settings = ExtResource("4_u81o2")
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -356,6 +383,101 @@ vertical_alignment = 1
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 25
+label_settings = ExtResource("4_u81o2")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="资质榜" type="VBoxContainer" parent="CanvasLayer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("5_lndp6")
+
+[node name="Label" type="Label" parent="CanvasLayer/HBoxContainer/资质榜"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 35
+text = "资质榜
+"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label1" type="Label" parent="CanvasLayer/HBoxContainer/资质榜"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 25
+label_settings = ExtResource("4_u81o2")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label2" type="Label" parent="CanvasLayer/HBoxContainer/资质榜"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 25
+label_settings = ExtResource("4_u81o2")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label3" type="Label" parent="CanvasLayer/HBoxContainer/资质榜"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 25
+label_settings = ExtResource("4_u81o2")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label4" type="Label" parent="CanvasLayer/HBoxContainer/资质榜"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 25
+label_settings = ExtResource("4_u81o2")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label5" type="Label" parent="CanvasLayer/HBoxContainer/资质榜"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 25
+label_settings = ExtResource("4_u81o2")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label6" type="Label" parent="CanvasLayer/HBoxContainer/资质榜"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 25
+label_settings = ExtResource("4_u81o2")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label7" type="Label" parent="CanvasLayer/HBoxContainer/资质榜"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 25
+label_settings = ExtResource("4_u81o2")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label8" type="Label" parent="CanvasLayer/HBoxContainer/资质榜"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 25
+label_settings = ExtResource("4_u81o2")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label9" type="Label" parent="CanvasLayer/HBoxContainer/资质榜"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 25
+label_settings = ExtResource("4_u81o2")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label10" type="Label" parent="CanvasLayer/HBoxContainer/资质榜"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 25
+label_settings = ExtResource("4_u81o2")
 horizontal_alignment = 1
 vertical_alignment = 1
 

@@ -54,17 +54,17 @@ public static class 设定 {
 	};
 
 	public static readonly Dictionary<境界, 属性值> 属性 = new() {
-		{ 境界.武徒, new 属性值 { 寿命 = 1.0, 生命上限 = 1.0, 修为上限 = 1.0, 伤害 = 1.0} },
+		{ 境界.武徒, new 属性值 { 寿命 = 1.0, 生命上限 = 1.0, 修为上限 = 2.0, 伤害 = 1.0} },
 		{ 境界.炼精化气, new 属性值 { 寿命 = 1.2, 生命上限 = 1.5, 生命 = 1.5, 修为上限 = 2.0, 伤害 = 1.1} },
 		{ 境界.炼气化神, new 属性值 { 寿命 = 1.2, 生命上限 = 1.5, 生命 = 1.5, 修为上限 = 2.0, 伤害 = 1.1} },
-		{ 境界.炼神还虚, new 属性值 { 寿命 = 1.2, 生命上限 = 1.5, 生命 = 1.5, 修为上限 = 2.0, 伤害 = 1.1} },
-		{ 境界.铜皮铁骨, new 属性值 { 寿命 = 1.5, 生命上限 = 2.0, 生命 = 2.0, 修为上限 = 3.0, 伤害 = 1.2} },
-		{ 境界.毫发不爽, new 属性值 { 寿命 = 1.5, 生命上限 = 2.0, 生命 = 2.0, 修为上限 = 3.0, 伤害 = 1.2} },
-		{ 境界.心领神会, new 属性值 { 寿命 = 1.5, 生命上限 = 2.0, 生命 = 2.0, 修为上限 = 3.0, 伤害 = 1.2} },
-		{ 境界.滴血重生, new 属性值 { 寿命 = 1.9, 生命上限 = 2.5, 生命 = 2.5, 修为上限 = 4.0, 伤害 = 1.3} },
-		{ 境界.合道同归, new 属性值 { 寿命 = 1.9, 生命上限 = 2.5, 生命 = 2.5, 修为上限 = 4.0, 伤害 = 1.3} },
-		{ 境界.独步乾坤, new 属性值 { 寿命 = 1.9, 生命上限 = 2.5, 生命 = 2.5, 修为上限 = 4.0, 伤害 = 1.3} },
-		{ 境界.武圣, new 属性值 { 寿命 = 2.4, 生命上限 = 3.0, 生命 = 3.0, 修为上限 = 5.0, 伤害 = 1.4} }
+		{ 境界.炼神还虚, new 属性值 { 寿命 = 1.2, 生命上限 = 1.5, 生命 = 1.5, 修为上限 = 3.5, 伤害 = 1.1} },
+		{ 境界.铜皮铁骨, new 属性值 { 寿命 = 1.5, 生命上限 = 2.0, 生命 = 2.0, 修为上限 = 3.5, 伤害 = 1.3} },
+		{ 境界.毫发不爽, new 属性值 { 寿命 = 1.5, 生命上限 = 2.0, 生命 = 2.0, 修为上限 = 3.5, 伤害 = 1.3} },
+		{ 境界.心领神会, new 属性值 { 寿命 = 1.5, 生命上限 = 2.0, 生命 = 2.0, 修为上限 = 5.0, 伤害 = 1.3} },
+		{ 境界.滴血重生, new 属性值 { 寿命 = 1.9, 生命上限 = 2.5, 生命 = 2.5, 修为上限 = 5.0, 伤害 = 1.6} },
+		{ 境界.合道同归, new 属性值 { 寿命 = 1.9, 生命上限 = 2.5, 生命 = 2.5, 修为上限 = 5.0, 伤害 = 1.6} },
+		{ 境界.独步乾坤, new 属性值 { 寿命 = 1.9, 生命上限 = 2.5, 生命 = 2.5, 修为上限 = 7.0, 伤害 = 1.6} },
+		{ 境界.武圣, new 属性值 { 寿命 = 5, 生命上限 = 5.0, 生命 = 5.0, 修为上限 = 10.0, 伤害 = 2.5} }
 	};
 }
 
@@ -72,8 +72,16 @@ public partial class GlData : Node {
 	[Signal]
 	public delegate void LogEventHandler(string text);
 
-	public static PackedScene Ball;
-	public static PackedScene Particles;
+	private PackedScene _ball;
+	public static PackedScene Ball {
+		get => Singletons._ball;
+	}
+
+	private PackedScene _particles;
+
+	public static PackedScene Particles {
+		get => Singletons._particles;
+	}
 	public static PackedScene Tip;
 	public static PackedScene Inherited;
 
@@ -87,8 +95,8 @@ public partial class GlData : Node {
 
 	public override void _Ready() {
 		ProcessMode = ProcessModeEnum.Always;
-		Ball = GD.Load<PackedScene>("res://scenes/ball.tscn");
-		Particles = GD.Load<PackedScene>("res://scenes/particles.tscn");
+		_ball = GD.Load<PackedScene>("res://scenes/ball.tscn");
+		_particles = GD.Load<PackedScene>("res://scenes/particles.tscn");
 		Tip = GD.Load<PackedScene>("res://scenes/tip.tscn");
 		Inherited = GD.Load<PackedScene>("res://scenes/传承.tscn");
 		if (OS.HasFeature("movie")) {
@@ -97,7 +105,7 @@ public partial class GlData : Node {
 	}
 
 	public override void _Input(InputEvent @event) {
-		if (Input.IsActionPressed("ui_accept")) {
+		if (!OS.HasFeature("movie") && Input.IsActionPressed("ui_accept")) {
 			GetTree().Paused = !GetTree().Paused;
 		}
 	}
@@ -138,12 +146,12 @@ public partial class GlData : Node {
 		Singletons.EmitSignal(SignalName.Log, text);
 	}
 
-	public static StringName GetGenerateRandomChineseCharacter() {
+	public static string GetGenerateRandomChineseCharacter() {
 		var unicode = (char)GD.RandRange(0x4E00, 0x9FA5 + 1);
 		return MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef(in unicode), 1).ToString();
 	}
 
-	public static StringName GetAgeGroup(double 年龄, double 寿命) {
+	public static string GetAgeGroup(double 年龄, double 寿命) {
 		return (年龄 / 寿命) switch {
 			< 0.05 => "幼年",
 			< 0.15 => "少年",
@@ -152,7 +160,7 @@ public partial class GlData : Node {
 			< 0.8 => "老年",
 			< 1.0 => "晚年",
 			>= 1.0 => "已死",
-			_ => (StringName)"幼年"
+			_ => "幼年"
 		};
 	}
 }

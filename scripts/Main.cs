@@ -7,9 +7,8 @@ namespace 球武道.scripts;
 
 public partial class Main : Node2D {
 	private bool _t = true;
-	
-	[Export]
-	public int 限时 = 100;
+
+	[Export] public int 限时 = 100;
 
 	public CanvasGroup 地图;
 	public RigidBody2D 红出生点;
@@ -22,9 +21,10 @@ public partial class Main : Node2D {
 	public RichTextLabel 日志;
 	public 境界榜 境界榜;
 	public 杀戮榜 杀戮榜;
+	public 资质榜 资质榜;
 	public int 月 = 1;
 	public int 年;
-	
+
 
 	public override void _Ready() {
 		GlData.Singletons.Log += OnSingletonsOnLog;
@@ -42,6 +42,7 @@ public partial class Main : Node2D {
 		日志 = GetNode<RichTextLabel>("%日志");
 		境界榜 = GetNode<境界榜>("%境界榜");
 		杀戮榜 = GetNode<杀戮榜>("%杀戮榜");
+		资质榜 = GetNode<资质榜>("%资质榜");
 		地图 = GetNode<CanvasGroup>("%地图");
 		红出生点 = GetNode<RigidBody2D>("%红出生点");
 		黄出生点 = GetNode<RigidBody2D>("%黄出生点");
@@ -100,9 +101,9 @@ public partial class Main : Node2D {
 				蓝出生点.GetNode<AnimationPlayer>("AnimationPlayer").Stop();
 				绿出生点.GetNode<AnimationPlayer>("AnimationPlayer").Stop();
 				GetNode<Timer>("Timer").Stop();
-				
+
 				var arr = new Array<Ball>((Array)GetTree().GetNodesInGroup("武者"));
-				var balls = arr.OrderByDescending(a => a.总修为).ToArray();
+				var balls = arr.OrderByDescending(a => a.境界).ThenByDescending(a => a.修为 / a.修为上限).ToArray();
 				var one = balls[0];
 				foreach (var ball in balls) {
 					if (ball.身份 != one.身份) {
@@ -124,6 +125,7 @@ public partial class Main : Node2D {
 
 		境界榜.更新();
 		杀戮榜.更新();
+		资质榜.更新();
 
 		年月.Text = $"{年}年{月}月";
 	}
@@ -157,7 +159,7 @@ public partial class Main : Node2D {
 		}";
 	}
 
-	public static Ball 出生(StringName 身份, Vector2 pos, Ball ball = null) {
+	public static Ball 出生(string 身份, Vector2 pos, Ball ball = null) {
 		ball ??= GlData.Ball.Instantiate<Ball>();
 		ball.GlobalPosition = pos;
 		ball.名字 = GlData.GetGenerateRandomChineseCharacter();
@@ -195,9 +197,9 @@ public partial class Main : Node2D {
 			ball.BodyEntered += body => {
 				if (body is Ball 敌人) {
 					if (ball.身份 != 敌人.身份) {
-						var 伤害 = Mathf.CeilToInt(10 * ((int)ball.境界 + 1.0) * (1.0 + (ball.境界 - 敌人.境界) * 0.1) * ball.伤害);
-						var 敌伤 = Mathf.CeilToInt(10 * ((int)敌人.境界 + 1.0) * (1.0 + (敌人.境界 - ball.境界) * 0.1) * 敌人.伤害);
-						var 收获 = Mathf.Snapped(敌人.修为上限 * 0.05, 0.1);
+						var 伤害 = Mathf.CeilToInt(10 * ((int)ball.境界 * 1.25 + 1.0) * (1.0 + (ball.境界 - 敌人.境界) * 0.1) * ball.伤害);
+						var 敌伤 = Mathf.CeilToInt(10 * ((int)敌人.境界 * 1.25 + 1.0) * (1.0 + (敌人.境界 - ball.境界) * 0.1) * 敌人.伤害);
+						var 收获 = Mathf.Snapped(敌人.修为上限 * 0.05 * (1.0 - (int)ball.境界 * 0.05), 0.1);
 
 						敌人.EmitSignal(Ball.SignalName.属性事件, (int)设定.属性名.生命, -伤害);
 						if (ball.生命 > 敌伤 || ball.修为 + 收获 > ball.修为上限) {
@@ -212,6 +214,8 @@ public partial class Main : Node2D {
 						}【{
 							ball.境界
 						}】[/font_size][/color]杀死了");
+						
+						ball.击杀数++;
 
 						var x = 敌人.修为上限 * 0.1;
 						if (ball.境界 <= 敌人.境界) {
@@ -230,8 +234,6 @@ public partial class Main : Node2D {
 						}
 
 						ball.EmitSignal(Ball.SignalName.属性事件, (int)设定.属性名.修为, Mathf.Snapped(x, 0.1));
-
-						ball.击杀数++;
 					}
 				}
 			};

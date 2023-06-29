@@ -1,4 +1,36 @@
-[gd_scene load_steps=3 format=3 uid="uid://nb5sjtjfkg00"]
+[gd_scene load_steps=11 format=3 uid="uid://nb5sjtjfkg00"]
+
+[ext_resource type="Shader" path="res://assets/test.gdshader" id="1_7p0pp"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_rs3xp"]
+seed = 9
+frequency = 0.0915
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_53qk5"]
+invert = true
+generate_mipmaps = false
+noise = SubResource("FastNoiseLite_rs3xp")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_6kart"]
+frequency = 1.0
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_nrb1j"]
+noise = SubResource("FastNoiseLite_6kart")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_funl3"]
+frequency = 0.5785
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_c0c5i"]
+invert = true
+generate_mipmaps = false
+noise = SubResource("FastNoiseLite_funl3")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_6kfg1"]
+shader = ExtResource("1_7p0pp")
+shader_parameter/screen_resolution = 1.0
+shader_parameter/iChannel0 = SubResource("NoiseTexture2D_53qk5")
+shader_parameter/iChannel1 = SubResource("NoiseTexture2D_nrb1j")
+shader_parameter/iChannel2 = SubResource("NoiseTexture2D_c0c5i")
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_tkwhw"]
 friction = 0.0
@@ -8,6 +40,7 @@ bounce = 1.0
 radius = 20.0
 
 [node name="Test" type="RigidBody2D"]
+material = SubResource("ShaderMaterial_6kfg1")
 physics_material_override = SubResource("PhysicsMaterial_tkwhw")
 gravity_scale = 0.0
 continuous_cd = 1

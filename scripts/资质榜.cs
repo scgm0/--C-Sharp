@@ -4,7 +4,7 @@ using Godot.Collections;
 
 namespace 球武道.scripts;
 
-public partial class 境界榜 : VBoxContainer {
+public partial class 资质榜 : VBoxContainer {
 	private Array<Label> _labels;
 
 	public override void _Ready() {
@@ -27,12 +27,8 @@ public partial class 境界榜 : VBoxContainer {
 		if (!arr.Any()) {
 			return;
 		}
-		
-		var balls = new Array<Node>(arr.OrderByDescending(a => ((Ball)a).境界).ThenByDescending(a => {
-			if (a is Ball b) return b.修为 / b.修为上限;
-			return 0;
-		}));
-		// var balls = new Array<Node>(arr.OrderByDescending(a => ((Ball)a).境界).ThenBy(a => (Ball)a));
+
+		var balls = new Array<Node>(arr.OrderByDescending(a => ((Ball)a).资质).ThenByDescending(a => ((Ball)a).总修为));
 		balls.Resize(10);
 		for (var i = 0; i < 10; i++) {
 			var label = _labels[i];
@@ -43,7 +39,7 @@ public partial class 境界榜 : VBoxContainer {
 			}
 
 			label.Modulate = ball.Body.Modulate;
-			label.Text = $"{ball.名字}：{ball.境界}";
+			label.Text = $"{ball.名字}：{ball.资质:F1}";
 		}
 	}
 }

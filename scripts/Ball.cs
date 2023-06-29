@@ -30,7 +30,7 @@ public partial class Ball : RigidBody2D {
 
 	[Export] public int 累计修为;
 	[Export] public string 名字;
-	[Export] public StringName 身份;
+	[Export] public string 身份;
 	[Export] public int 修为上限 = 120;
 	public bool 已死;
 	[Export] public double 资质 = 0.1;
@@ -94,7 +94,7 @@ public partial class Ball : RigidBody2D {
 			if (年龄 < 寿命) return;
 			死($"寿尽而亡");
 			var cc = GlData.Inherited.Instantiate<传承>();
-			cc.name = 名字;
+			cc.名字 = 名字;
 			cc.身份 = 身份;
 			cc.属性 = new 设定.属性值 {
 				资质 = 资质 * (1.0 + (int)境界 * 0.1),
@@ -116,7 +116,7 @@ public partial class Ball : RigidBody2D {
 			if (年龄 < 寿命) return;
 			死($"寿尽而亡");
 			var cc = GlData.Inherited.Instantiate<传承>();
-			cc.name = 名字;
+			cc.名字 = 名字;
 			cc.身份 = 身份;
 			cc.属性 = new 设定.属性值 {
 				资质 = 资质 * (1.0 + (int)境界 * 0.1),
@@ -227,13 +227,13 @@ public partial class Ball : RigidBody2D {
 	}
 
 	public void 突破() {
-		if (已死) return;
+		if (已死 || 境界 == 设定.境界.武圣) return;
 		累计修为 += 修为上限;
 		var old修为上限 = 修为上限;
 		境界++;
 		Mul(this, 设定.属性[境界]);
 		EmitSignal(SignalName.属性事件, (int)设定.属性名.生命, (int)(生命上限 * 0.1));
-		EmitSignal(SignalName.属性事件, (int)设定.属性名.资质, 0.1);
+		EmitSignal(SignalName.属性事件, (int)设定.属性名.资质, (int)境界 * 0.05);
 		GlData.MainLog(
 			$"[color={
 				Body.Modulate.ToHtml()
