@@ -62,7 +62,8 @@ public partial class Ball : RigidBody2D {
 			}
 
 			_境界 = value;
-			Mass = (int)境界 + 1;
+			Mass = 1 + (int)境界;
+			GravityScale = (float)(1.0 - (int)境界 * 0.2);
 			GetNode<Label>("%境界").Text = 境界.ToString();
 			GetNode<Label>("%境界").AddThemeFontSizeOverride("font_size", 16 + (int)境界 * 2);
 			GetNode<Label>("%境界").AddThemeColorOverride("font_outline_color",
@@ -149,6 +150,7 @@ public partial class Ball : RigidBody2D {
 
 
 	public override void _Ready() {
+		// await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
 		Body = GetNode<MeshInstance2D>("Body");
 		Body.Modulate = 设定.阵营[身份];
 		GetNode<Label>("%名字").Text = 名字;
@@ -166,7 +168,9 @@ public partial class Ball : RigidBody2D {
 			if (num == 0) return;
 			AddTip($"{name} {(num > 0 ? $"+{num:F1}" : num):F1}", num < 0);
 			switch (name) {
-				case 设定.属性名.寿命: break;
+				case 设定.属性名.寿命:
+					寿命 += (int)num;
+					break;
 				case 设定.属性名.年龄: break;
 				case 设定.属性名.生命上限:
 					生命上限 += (int)num;
@@ -182,6 +186,9 @@ public partial class Ball : RigidBody2D {
 					break;
 				case 设定.属性名.资质:
 					资质 += num;
+					break;
+				case 设定.属性名.伤害:
+					伤害 += num;
 					break;
 				default: throw new ArgumentOutOfRangeException(nameof(name), name, null);
 			}
@@ -261,6 +268,53 @@ public partial class Ball : RigidBody2D {
 				伤害
 				:F1}】");
 		修为 -= old修为上限;
+		AddToGroup(境界.ToString());
+		if (!GlData.境界组.ContainsKey(境界)) {
+			GlData.境界组[境界] = true;
+			var 属性 = new 设定.属性值 {
+				寿命 = (int)(寿命 * 0.2),
+				生命 = (int)(生命上限 * 0.1),
+				资质 = 0.1 + (int)境界 * 0.1,
+				伤害 = 0.1
+			};
+			GlData.MainLog($"[color={
+				Body.Modulate.ToHtml()
+			}][font_size=21]【{
+				名字
+			}】[/font_size][/color]率先突破到[color={
+				Body.Modulate.ToHtml()
+			}][font_size=21]【{
+				境界
+			}】[/font_size][/color]\n寿命 +{
+				属性.寿命
+			} 生命 +{
+				属性.生命
+			} 资质 +{
+				属性.资质
+			:F1} 伤害 +{
+				属性.伤害
+			:F1}",
+				true);
+			if (属性.寿命 != null) EmitSignal(SignalName.属性事件, (int)设定.属性名.寿命, (Variant)属性.寿命);
+			if (属性.生命上限 != null) EmitSignal(SignalName.属性事件, (int)设定.属性名.生命上限, (Variant)属性.生命上限);
+			if (属性.生命 != null) EmitSignal(SignalName.属性事件, (int)设定.属性名.生命, (Variant)属性.生命);
+			if (属性.资质 != null) EmitSignal(SignalName.属性事件, (int)设定.属性名.资质, (Variant)属性.资质);
+			if (属性.伤害 != null) EmitSignal(SignalName.属性事件, (int)设定.属性名.伤害, (Variant)属性.伤害);
+
+			var x = $"[color={
+				Body.Modulate.ToHtml()
+			}][font_size=21]【{
+				境界.ToString()
+			}】[/font_size][/color]开道者[color={
+				Body.Modulate.ToHtml()
+			}][font_size=21]【{
+				名字
+			}】[/font_size][/color]";
+
+			死亡事件 += 死因 => {
+				GlData.MainLog($"{x}{死因}", true);
+			};
+		}
 	}
 
 	public void AddTip(string text, bool 正负) {

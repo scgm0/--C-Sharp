@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://dw4v2wkpco5pj"]
+[gd_scene load_steps=14 format=3 uid="uid://dw4v2wkpco5pj"]
 
 [ext_resource type="Script" path="res://scripts/传承.cs" id="1_w1ivt"]
 [ext_resource type="Shader" path="res://assets/circle.gdshader" id="2_kicxu"]
@@ -52,6 +52,9 @@ radial_accel_curve = SubResource("CurveTexture_5rl0y")
 scale_min = 0.01
 scale_max = 0.04
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_g7qd8"]
+radius = 60.0
+
 [node name="传承" type="Area2D"]
 z_index = -1
 position = Vector2(316, 197)
@@ -72,6 +75,17 @@ mesh = SubResource("QuadMesh_21gk8")
 
 [node name="GPUParticles2D" type="GPUParticles2D" parent="."]
 emitting = false
-amount = 10
+amount = 5
 process_material = SubResource("ParticleProcessMaterial_0w1qm")
 texture = ExtResource("3_4glw6")
+
+[node name="Area2D" type="Area2D" parent="."]
+gravity_space_override = 1
+gravity_point = true
+gravity_point_unit_distance = 40.0
+gravity_point_center = Vector2(0, 0)
+gravity_direction = Vector2(0, 0)
+gravity = 0.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("CircleShape2D_g7qd8")

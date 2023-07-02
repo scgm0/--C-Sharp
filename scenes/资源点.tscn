@@ -3,8 +3,8 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_jnkqe"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_m0pun"]
-radius = 10.0
-height = 20.0
+radius = 20.0
+height = 40.0
 
 [node name="资源点" type="StaticBody2D"]
 

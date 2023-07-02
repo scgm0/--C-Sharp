@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Godot;
 using Godot.Collections;
@@ -7,6 +8,8 @@ namespace 球武道.scripts;
 
 public partial class Main : Node2D {
 	private bool _t = true;
+	private List<string> _announcements = new();
+	private bool _announcement = true;
 
 	[Export] public int 限时 = 100;
 
@@ -19,6 +22,7 @@ public partial class Main : Node2D {
 
 	public Label 年月;
 	public RichTextLabel 日志;
+	public RichTextLabel 公告;
 	public 境界榜 境界榜;
 	public 杀戮榜 杀戮榜;
 	public 资质榜 资质榜;
@@ -40,6 +44,7 @@ public partial class Main : Node2D {
 
 		年月 = GetNode<Label>("%年月");
 		日志 = GetNode<RichTextLabel>("%日志");
+		公告 = GetNode<RichTextLabel>("%公告");
 		境界榜 = GetNode<境界榜>("%境界榜");
 		杀戮榜 = GetNode<杀戮榜>("%杀戮榜");
 		资质榜 = GetNode<资质榜>("%资质榜");
@@ -78,6 +83,18 @@ public partial class Main : Node2D {
 			地图.AddChild(出生("绿", 绿出生点.GlobalPosition));
 			地图.AddChild(出生("蓝", 蓝出生点.GlobalPosition));
 		}));
+	}
+
+	public override void _PhysicsProcess(double delta) {
+		if (_announcements.Count > 0 && _announcement) {
+			_announcement = false;
+			公告.Text = _announcements[0];
+			_announcements.RemoveAt(0);
+			var tween = CreateTween();
+			tween.TweenProperty(公告, "modulate:a", 1.0, 0.5);
+			tween.TweenProperty(公告, "modulate:a", 0.0, 0.2).SetDelay(3);
+			tween.TweenCallback(Callable.From(() => _announcement = true));
+		}
 	}
 
 	private async void _OnTimerTimeout() {
@@ -167,7 +184,7 @@ public partial class Main : Node2D {
 		ball.境界 = 设定.境界.武徒;
 		ball.年龄 = 0;
 		ball.AddToGroup(身份);
-		ball.LinearVelocity = new Vector2((float)GD.RandRange(-10.0, 10.0), (float)GD.RandRange(-10.0, 10.0)).Normalized() * 25;
+		ball.LinearVelocity = new Vector2((float)GD.RandRange(-10.0, 10.0), (float)GD.RandRange(-10.0, 10.0)).Normalized() * 30;
 		ball.AddToGroup("武者");
 		ball.Ready += () => {
 			GlData.MainLog(
@@ -197,8 +214,8 @@ public partial class Main : Node2D {
 			ball.BodyEntered += body => {
 				if (body is Ball 敌人) {
 					if (ball.身份 != 敌人.身份) {
-						var 伤害 = Mathf.CeilToInt(10 * ((int)ball.境界 * 1.25 + 1.0) * (1.0 + (ball.境界 - 敌人.境界) * 0.1) * ball.伤害);
-						var 敌伤 = Mathf.CeilToInt(10 * ((int)敌人.境界 * 1.25 + 1.0) * (1.0 + (敌人.境界 - ball.境界) * 0.1) * 敌人.伤害);
+						var 伤害 = Mathf.CeilToInt(15 * ((int)ball.境界 * 1.25 + 1.0) * ball.伤害);
+						var 敌伤 = Mathf.CeilToInt(15 * ((int)敌人.境界 * 1.25 + 1.0) * 敌人.伤害);
 						var 收获 = Mathf.Snapped(敌人.修为上限 * 0.05 * (1.0 - (int)ball.境界 * 0.05), 0.1);
 
 						敌人.EmitSignal(Ball.SignalName.属性事件, (int)设定.属性名.生命, -伤害);
@@ -214,7 +231,7 @@ public partial class Main : Node2D {
 						}【{
 							ball.境界
 						}】[/font_size][/color]杀死了");
-						
+
 						ball.击杀数++;
 
 						var x = 敌人.修为上限 * 0.1;
@@ -224,7 +241,7 @@ public partial class Main : Node2D {
 							x *= 1 + (敌人.境界 - ball.境界) * 0.1;
 							ball.EmitSignal(Ball.SignalName.属性事件,
 								(int)设定.属性名.资质,
-								Mathf.Snapped(Mathf.Max(敌人.资质 * 0.5, 0.1), 0.1));
+								Mathf.Snapped(Mathf.Max(敌人.资质 * 0.75 * (1.0 + (int)敌人.境界 * 0.1), 0.1), 0.1));
 						} else {
 							x += 敌人.累计修为 * 0.05 / (ball.境界 - 敌人.境界 + 1);
 							x += (1 / (double)(ball.境界 - 敌人.境界)) * GD.RandRange(敌人.修为 * 0.5, 敌人.修为 * 0.8);
@@ -246,4 +263,12 @@ public partial class Main : Node2D {
 		日志.AppendText("[font_size=6]\n\n[/font_size]");
 	}
 
+	private void OnSingletonsOnLog(string text, bool announcement) {
+		
+		if (announcement) {
+			text = $"{年}年{月}月：{text}";
+			_announcements.Add($"[center]{text.Replace("[font_size=21]", "[font_size=61]")}[/center]");
+		}
+		OnSingletonsOnLog(text);
+	}
 }

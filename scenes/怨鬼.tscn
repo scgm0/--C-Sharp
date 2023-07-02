@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://w312ja5vk4ju"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_s3ook"]
+radius = 30.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_yj5er"]
+radius = 30.0
+height = 60.0
+
+[node name="怨鬼" type="RigidBody2D"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_s3ook")
+
+[node name="MeshInstance2D" type="MeshInstance2D" parent="."]
+mesh = SubResource("SphereMesh_yj5er")

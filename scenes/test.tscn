@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://nb5sjtjfkg00"]
+[gd_scene load_steps=12 format=3 uid="uid://nb5sjtjfkg00"]
 
 [ext_resource type="Shader" path="res://assets/test.gdshader" id="1_7p0pp"]
 
@@ -32,37 +32,39 @@ shader_parameter/iChannel0 = SubResource("NoiseTexture2D_53qk5")
 shader_parameter/iChannel1 = SubResource("NoiseTexture2D_nrb1j")
 shader_parameter/iChannel2 = SubResource("NoiseTexture2D_c0c5i")
 
-[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_tkwhw"]
-friction = 0.0
-bounce = 1.0
+[sub_resource type="CircleShape2D" id="CircleShape2D_0qe1c"]
+radius = 321.315
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_sc2ua"]
-radius = 20.0
+[sub_resource type="CircleShape2D" id="CircleShape2D_nlh31"]
+radius = 30.0
 
-[node name="Test" type="RigidBody2D"]
+[sub_resource type="SphereMesh" id="SphereMesh_n61f5"]
+radius = 30.0
+height = 60.0
+
+[node name="Test" type="Node2D"]
 material = SubResource("ShaderMaterial_6kfg1")
-physics_material_override = SubResource("PhysicsMaterial_tkwhw")
-gravity_scale = 0.0
-continuous_cd = 1
-max_contacts_reported = 3
-contact_monitor = true
-lock_rotation = true
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("CircleShape2D_sc2ua")
+[node name="Area2D" type="Area2D" parent="."]
+position = Vector2(608.04, 473.911)
+gravity_space_override = 1
+gravity_point = true
+gravity_point_center = Vector2(0, 0)
+gravity_direction = Vector2(0, 0)
+gravity = -980.0
+linear_damp_space_override = 3
+linear_damp = 0.0
+angular_damp_space_override = 3
+angular_damp = 0.0
 
-[node name="Label" type="Label" parent="."]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -11.1667
-offset_right = 20.0
-offset_bottom = 11.1667
-grow_horizontal = 2
-grow_vertical = 2
-text = "名"
-horizontal_alignment = 1
-vertical_alignment = 1
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("CircleShape2D_0qe1c")
+
+[node name="RigidBody2D" type="RigidBody2D" parent="."]
+position = Vector2(554, 74)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RigidBody2D"]
+shape = SubResource("CircleShape2D_nlh31")
+
+[node name="MeshInstance2D" type="MeshInstance2D" parent="RigidBody2D"]
+mesh = SubResource("SphereMesh_n61f5")

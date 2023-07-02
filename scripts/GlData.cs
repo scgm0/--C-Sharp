@@ -15,7 +15,8 @@ public static class 设定 {
 		生命,
 		修为上限,
 		修为,
-		资质
+		资质,
+		伤害
 	}
 	public struct 属性值 {
 		public double? 寿命;
@@ -70,7 +71,7 @@ public static class 设定 {
 
 public partial class GlData : Node {
 	[Signal]
-	public delegate void LogEventHandler(string text);
+	public delegate void LogEventHandler(string text, bool announcement = false);
 
 	private PackedScene _ball;
 	public static PackedScene Ball {
@@ -86,6 +87,8 @@ public partial class GlData : Node {
 	public static PackedScene Inherited;
 
 	public static readonly List<Ball> BallPool = new List<Ball>();
+
+	public static Dictionary<设定.境界, bool> 境界组 = new();
 
 	public GlData() {
 		Singletons = this;
@@ -142,8 +145,8 @@ public partial class GlData : Node {
 		ball.累计修为 = 0;
 	}
 
-	public static void MainLog(string text) {
-		Singletons.EmitSignal(SignalName.Log, text);
+	public static void MainLog(string text, bool announcement = false) {
+		Singletons.EmitSignal(SignalName.Log, text, announcement);
 	}
 
 	public static string GetGenerateRandomChineseCharacter() {

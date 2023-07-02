@@ -46,7 +46,6 @@ shader_parameter/fill_ratio = 0.0
 [node name="Ball" type="RigidBody2D"]
 z_index = 5
 physics_material_override = SubResource("PhysicsMaterial_n1buk")
-continuous_cd = 1
 max_contacts_reported = 3
 contact_monitor = true
 lock_rotation = true
