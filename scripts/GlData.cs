@@ -1,11 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Godot;
 
 namespace 球武道.scripts;
-
-
 
 public static class 设定 {
 	public enum 属性名 {
@@ -18,6 +17,7 @@ public static class 设定 {
 		资质,
 		伤害
 	}
+
 	public struct 属性值 {
 		public double? 寿命;
 		public double? 年龄;
@@ -28,7 +28,7 @@ public static class 设定 {
 		public double? 资质;
 		public double? 伤害;
 	}
-	
+
 	public enum 境界 {
 		武徒,
 
@@ -55,17 +55,17 @@ public static class 设定 {
 	};
 
 	public static readonly Dictionary<境界, 属性值> 属性 = new() {
-		{ 境界.武徒, new 属性值 { 寿命 = 1.0, 生命上限 = 1.0, 修为上限 = 2.0, 伤害 = 1.0} },
-		{ 境界.炼精化气, new 属性值 { 寿命 = 1.2, 生命上限 = 1.5, 生命 = 1.5, 修为上限 = 2.0, 伤害 = 1.1} },
-		{ 境界.炼气化神, new 属性值 { 寿命 = 1.2, 生命上限 = 1.5, 生命 = 1.5, 修为上限 = 2.0, 伤害 = 1.1} },
-		{ 境界.炼神还虚, new 属性值 { 寿命 = 1.2, 生命上限 = 1.5, 生命 = 1.5, 修为上限 = 3.5, 伤害 = 1.1} },
-		{ 境界.铜皮铁骨, new 属性值 { 寿命 = 1.5, 生命上限 = 2.0, 生命 = 2.0, 修为上限 = 3.5, 伤害 = 1.3} },
-		{ 境界.毫发不爽, new 属性值 { 寿命 = 1.5, 生命上限 = 2.0, 生命 = 2.0, 修为上限 = 3.5, 伤害 = 1.3} },
-		{ 境界.心领神会, new 属性值 { 寿命 = 1.5, 生命上限 = 2.0, 生命 = 2.0, 修为上限 = 5.0, 伤害 = 1.3} },
-		{ 境界.滴血重生, new 属性值 { 寿命 = 1.9, 生命上限 = 2.5, 生命 = 2.5, 修为上限 = 5.0, 伤害 = 1.6} },
-		{ 境界.合道同归, new 属性值 { 寿命 = 1.9, 生命上限 = 2.5, 生命 = 2.5, 修为上限 = 5.0, 伤害 = 1.6} },
-		{ 境界.独步乾坤, new 属性值 { 寿命 = 1.9, 生命上限 = 2.5, 生命 = 2.5, 修为上限 = 7.0, 伤害 = 1.6} },
-		{ 境界.武圣, new 属性值 { 寿命 = 5, 生命上限 = 5.0, 生命 = 5.0, 修为上限 = 10.0, 伤害 = 2.5} }
+		{ 境界.武徒, new 属性值 { 寿命 = 1.0, 生命上限 = 1.0, 修为上限 = 2.0, 伤害 = 1.0 } },
+		{ 境界.炼精化气, new 属性值 { 寿命 = 1.2, 生命上限 = 1.5, 生命 = 1.5, 修为上限 = 2.0, 伤害 = 1.1 } },
+		{ 境界.炼气化神, new 属性值 { 寿命 = 1.2, 生命上限 = 1.5, 生命 = 1.5, 修为上限 = 2.0, 伤害 = 1.1 } },
+		{ 境界.炼神还虚, new 属性值 { 寿命 = 1.2, 生命上限 = 1.5, 生命 = 1.5, 修为上限 = 3.5, 伤害 = 1.1 } },
+		{ 境界.铜皮铁骨, new 属性值 { 寿命 = 1.5, 生命上限 = 2.0, 生命 = 2.0, 修为上限 = 3.5, 伤害 = 1.3 } },
+		{ 境界.毫发不爽, new 属性值 { 寿命 = 1.5, 生命上限 = 2.0, 生命 = 2.0, 修为上限 = 3.5, 伤害 = 1.3 } },
+		{ 境界.心领神会, new 属性值 { 寿命 = 1.5, 生命上限 = 2.0, 生命 = 2.0, 修为上限 = 5.0, 伤害 = 1.3 } },
+		{ 境界.滴血重生, new 属性值 { 寿命 = 1.9, 生命上限 = 2.5, 生命 = 2.5, 修为上限 = 5.0, 伤害 = 1.6 } },
+		{ 境界.合道同归, new 属性值 { 寿命 = 1.9, 生命上限 = 2.5, 生命 = 2.5, 修为上限 = 5.0, 伤害 = 1.6 } },
+		{ 境界.独步乾坤, new 属性值 { 寿命 = 1.9, 生命上限 = 2.5, 生命 = 2.5, 修为上限 = 7.0, 伤害 = 1.6 } },
+		{ 境界.武圣, new 属性值 { 寿命 = 5, 生命上限 = 5.0, 生命 = 5.0, 修为上限 = 10.0, 伤害 = 2.5 } }
 	};
 }
 
@@ -74,6 +74,7 @@ public partial class GlData : Node {
 	public delegate void LogEventHandler(string text, bool announcement = false);
 
 	private PackedScene _ball;
+
 	public static PackedScene Ball {
 		get => Singletons._ball;
 	}
@@ -83,6 +84,7 @@ public partial class GlData : Node {
 	public static PackedScene Particles {
 		get => Singletons._particles;
 	}
+
 	public static PackedScene Tip;
 	public static PackedScene Inherited;
 
@@ -121,6 +123,7 @@ public partial class GlData : Node {
 			ball = BallPool[0];
 			BallPool.RemoveAt(0);
 		}
+
 		ball.SetProcess(true);
 		ball.已死 = false;
 		ball.境界 = 设定.境界.武徒;
@@ -150,12 +153,20 @@ public partial class GlData : Node {
 	}
 
 	public static string GetGenerateRandomChineseCharacter() {
-		var unicode = (char)GD.RandRange(0x4E00, 0x9FA5 + 1);
-		return MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef(in unicode), 1).ToString();
+		// var unicode = (char)Random.Shared.Next(0x4E00, 0x9FA5 + 1);
+		return MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef((char)Random.Shared.Next(0x4E00, 0x9FA5 + 1)), 1).ToString();
 	}
 
-	public static string GetAgeGroup(double 年龄, double 寿命) {
-		return (年龄 / 寿命) switch {
+	public static string GetAgeGroup(double age, double lifespan) {
+		if (age < 0 || lifespan < 0) {
+			throw new ArgumentException("年龄和寿命不能为负数");
+		}
+
+		if (lifespan == 0) {
+			throw new ArgumentException("寿命不能为零");
+		}
+
+		return (age / lifespan) switch {
 			< 0.05 => "幼年",
 			< 0.15 => "少年",
 			< 0.4 => "青年",

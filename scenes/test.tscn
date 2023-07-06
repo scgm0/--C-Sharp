@@ -1,6 +1,7 @@
-[gd_scene load_steps=12 format=3 uid="uid://nb5sjtjfkg00"]
+[gd_scene load_steps=13 format=3 uid="uid://nb5sjtjfkg00"]
 
 [ext_resource type="Shader" path="res://assets/test.gdshader" id="1_7p0pp"]
+[ext_resource type="Script" path="res://scripts/Test.cs" id="2_fi4xw"]
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_rs3xp"]
 seed = 9
@@ -44,6 +45,7 @@ height = 60.0
 
 [node name="Test" type="Node2D"]
 material = SubResource("ShaderMaterial_6kfg1")
+script = ExtResource("2_fi4xw")
 
 [node name="Area2D" type="Area2D" parent="."]
 position = Vector2(608.04, 473.911)

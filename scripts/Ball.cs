@@ -148,12 +148,39 @@ public partial class Ball : RigidBody2D {
 		get => _生命;
 	}
 
-
 	public override void _Ready() {
-		// await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
 		Body = GetNode<MeshInstance2D>("Body");
-		Body.Modulate = 设定.阵营[身份];
 		GetNode<Label>("%名字").Text = 名字;
+	}
+
+
+	public async void 出生() {
+		Body.Modulate = 设定.阵营[身份];
+		境界 = 设定.境界.武徒;
+				GlData.MainLog(
+			$"[color={
+				Body.Modulate.ToHtml()
+			}][font_size=21]{
+				名字
+			}[/font_size][/color] 出生了：境界【{
+				境界
+			}】寿命【{
+				年龄
+			}/{
+				寿命
+			}】生命【{
+				生命
+			}/{
+				生命上限
+			}】修为【{
+				修为
+				:F1}/{
+				修为上限
+			}】资质【{
+				资质
+				:F1}】伤害【{
+				伤害
+				:F1}】");
 		死亡事件 += 死因 => {
 			var par = GlData.Particles.Instantiate<GpuParticles2D>();
 			par.Emitting = true;
@@ -163,7 +190,7 @@ public partial class Ball : RigidBody2D {
 			AddSibling(par);
 			GlData.MainLog($"[color={Body.Modulate.ToHtml()}][font_size=21]{名字}【{境界}】[/font_size][/color]{死因}：享年{年龄}岁");
 		};
-
+		
 		属性事件 += (name, num) => {
 			if (num == 0) return;
 			AddTip($"{name} {(num > 0 ? $"+{num:F1}" : num):F1}", num < 0);
@@ -193,9 +220,11 @@ public partial class Ball : RigidBody2D {
 				default: throw new ArgumentOutOfRangeException(nameof(name), name, null);
 			}
 		};
+		
+		AddToGroup("武者");
 	}
 
-	public override void _Process(double delta) {
+	public override void _PhysicsProcess(double delta) {
 		if (_tip0S.Count > 0 && _tip0) {
 			_tip0 = false;
 			AddChild(_tip0S[0]);

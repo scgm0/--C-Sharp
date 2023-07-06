@@ -8,8 +8,11 @@ namespace 球武道.scripts;
 
 public partial class Main : Node2D {
 	private bool _t = true;
-	private List<string> _announcements = new();
+	private List<string> _logs = new();
+	private bool _log = true;
+	private readonly List<string> _announcements = new();
 	private bool _announcement = true;
+	
 
 	[Export] public int 限时 = 100;
 
@@ -85,7 +88,16 @@ public partial class Main : Node2D {
 		}));
 	}
 
-	public override void _PhysicsProcess(double delta) {
+	public override async void _PhysicsProcess(double delta) {
+		if (_logs.Count > 0 && _log) {
+			_log = false;
+			日志.AppendText(_logs[0]);
+			日志.AppendText("[font_size=6]\n\n[/font_size]");
+			_logs.RemoveAt(0);
+			await ToSignal(GetTree().CreateTimer(0.1), Timer.SignalName.Timeout);
+			_log = true;
+		}
+		
 		if (_announcements.Count > 0 && _announcement) {
 			_announcement = false;
 			公告.Text = _announcements[0];
@@ -179,14 +191,19 @@ public partial class Main : Node2D {
 	public static Ball 出生(string 身份, Vector2 pos, Ball ball = null) {
 		ball ??= GlData.Ball.Instantiate<Ball>();
 		ball.GlobalPosition = pos;
+		ball.LinearVelocity = new Vector2((float)GD.RandRange(-10.0, 10.0), (float)GD.RandRange(-10.0, 10.0)).Normalized() * 30;
 		ball.名字 = GlData.GetGenerateRandomChineseCharacter();
 		ball.身份 = 身份;
-		ball.境界 = 设定.境界.武徒;
-		ball.年龄 = 0;
+		// ball.境界 = 设定.境界.武徒;
+		// ball.年龄 = 0;
 		ball.AddToGroup(身份);
-		ball.LinearVelocity = new Vector2((float)GD.RandRange(-10.0, 10.0), (float)GD.RandRange(-10.0, 10.0)).Normalized() * 30;
-		ball.AddToGroup("武者");
-		ball.Ready += () => {
+		// ball.AddToGroup("武者");
+		if (ball.IsNodeReady()) {
+			ball.出生();
+		} else {
+			ball.Ready += ball.出生;
+		}
+		/* ball.Ready += () => {
 			GlData.MainLog(
 				$"[color={
 					ball.Body.Modulate.ToHtml()
@@ -255,20 +272,22 @@ public partial class Main : Node2D {
 				}
 			};
 		};
+		*/
 		return ball;
 	}
 
 	private void OnSingletonsOnLog(string text) {
-		日志.AppendText(text);
-		日志.AppendText("[font_size=6]\n\n[/font_size]");
+		_logs.Add(text);
+		// 日志.AppendText(text);
+		// 日志.AppendText("[font_size=6]\n\n[/font_size]");
 	}
 
 	private void OnSingletonsOnLog(string text, bool announcement) {
-		
 		if (announcement) {
 			text = $"{年}年{月}月：{text}";
 			_announcements.Add($"[center]{text.Replace("[font_size=21]", "[font_size=61]")}[/center]");
 		}
+
 		OnSingletonsOnLog(text);
 	}
 }

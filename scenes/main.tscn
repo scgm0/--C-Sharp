@@ -188,6 +188,7 @@ scroll_active = false
 scroll_following = true
 shortcut_keys_enabled = false
 threaded = true
+progress_bar_delay = -1
 
 [node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer"]
 anchors_preset = 1

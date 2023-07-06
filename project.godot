@@ -41,6 +41,7 @@ movie_writer/disable_vsync=true
 
 [gui]
 
+theme/custom_font="res://assets/SourceHanSansSC/SourceHanSansSC-Medium.ttf"
 theme/default_font_multichannel_signed_distance_field=true
 theme/default_font_generate_mipmaps=true
 

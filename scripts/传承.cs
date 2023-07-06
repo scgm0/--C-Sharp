@@ -65,7 +65,7 @@ public partial class 传承 : Area2D {
 							_meshInstance2D.Modulate = _meshInstance2D.Modulate with { A = (float)0.5 };
 							_area2D.Gravity = -5;
 							GetNode<GpuParticles2D>("GPUParticles2D").Emitting = true;
-							GlData.MainLog($"[color={_meshInstance2D2.Modulate.ToHtml()}][font_size=21]【{名字}】[/font_size][/color]之禁地出世了");
+							GlData.MainLog($"[color={_meshInstance2D2.Modulate.ToHtml()}][font_size=21]【{名字}】[/font_size][/color]之禁地出世了", true);
 						} else {
 							_area2D.Gravity -= 1;
 							GetNode<GpuParticles2D>("GPUParticles2D").Amount += 2;
@@ -81,7 +81,7 @@ public partial class 传承 : Area2D {
 							ball.名字
 						}【{
 							ball.境界
-						}】[/font_size][/color]覆灭了");
+						}】[/font_size][/color]覆灭了", true);
 						// ball.EmitSignal(Ball.SignalName.属性事件,
 						// 	(int)设定.属性名.生命,
 						// 	Mathf.CeilToInt(ball.生命上限 * 0.25 * (计时 / 100.0)));
